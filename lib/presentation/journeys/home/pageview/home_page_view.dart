@@ -7,6 +7,7 @@ import 'package:redrotapp/presentation/logic/cubit/all/all_cubit.dart';
 import 'package:redrotapp/presentation/logic/cubit/completed/completed_cubit.dart';
 import 'package:redrotapp/presentation/logic/cubit/fetch_state.dart';
 import 'package:redrotapp/presentation/logic/cubit/verify_needed/verify_needed_cubit.dart';
+import 'package:redrotapp/presentation/widgets/loading_indicator.dart';
 
 class HomePageView extends StatefulWidget {
   final int index;
@@ -55,9 +56,7 @@ class _HomePageViewState extends State<HomePageView> {
 
         if (fetchState is FetchInitial) {
           return Center(
-            child: CircularProgressIndicator(
-              color: Theme.of(context).colorScheme.secondary,
-            ),
+            child: LoadingIndicator(),
           );
         }
 

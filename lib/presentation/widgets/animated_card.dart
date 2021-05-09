@@ -96,6 +96,12 @@ class _AnimatedCardState extends State<AnimatedCard>
     }
   }
 
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   void _resetAnimation() {
     _controller.reverse();
   }

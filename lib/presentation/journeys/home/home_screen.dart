@@ -1,3 +1,4 @@
+import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:redrotapp/di/get_it.dart';
@@ -5,6 +6,7 @@ import 'package:redrotapp/presentation/journeys/home/pageview/home_page_view.dar
 import 'package:redrotapp/presentation/logic/cubit/all/all_cubit.dart';
 import 'package:redrotapp/presentation/logic/cubit/completed/completed_cubit.dart';
 import 'package:redrotapp/presentation/logic/cubit/verify_needed/verify_needed_cubit.dart';
+import 'package:redrotapp/presentation/widgets/loading_indicator.dart';
 import 'package:redrotapp/presentation/widgets/redrot_app_bar.dart';
 import 'package:sizer/sizer.dart';
 

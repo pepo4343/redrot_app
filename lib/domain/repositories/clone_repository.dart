@@ -7,4 +7,10 @@ abstract class CloneRepository {
   Future<ClonesResultEntity> getVerifyNeededClones(int page);
 
   Future<ClonesResultEntity> getCompletedClones(int page);
+
+  Future<ClonesResultEntity> getNextClones(String id);
+
+  Future<ClonesResultEntity> getNextVerifyNeededClones(String id);
+
+  Future<ClonesResultEntity> getNextCompletedClones(String id);
 }

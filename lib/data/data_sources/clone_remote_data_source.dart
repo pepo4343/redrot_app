@@ -8,6 +8,10 @@ abstract class CloneRemoteDataSource {
   Future<ClonesResultModel> getClones(int page);
   Future<ClonesResultModel> getVerifyNeededClones(int page);
   Future<ClonesResultModel> getCompletedClones(int page);
+
+  Future<ClonesResultModel> getNextClones(String cloneId);
+  Future<ClonesResultModel> getNextVerifyNeededClones(String cloneId);
+  Future<ClonesResultModel> getNextCompletedClones(String cloneId);
 }
 
 class CloneRemoteDataSourceImpl extends CloneRemoteDataSource {
@@ -45,6 +49,42 @@ class CloneRemoteDataSourceImpl extends CloneRemoteDataSource {
       "/clone/list/completed",
       body: {
         "page": page,
+      },
+    );
+    final clonesResults = ClonesResultModel.fromJson(response);
+    return clonesResults;
+  }
+
+  @override
+  Future<ClonesResultModel> getNextClones(String cloneId) async {
+    final response = await client.post(
+      "/clone/list",
+      body: {
+        "cloneId": cloneId,
+      },
+    );
+    final clonesResults = ClonesResultModel.fromJson(response);
+    return clonesResults;
+  }
+
+  @override
+  Future<ClonesResultModel> getNextCompletedClones(String cloneId) async {
+    final response = await client.post(
+      "/clone/list/completed",
+      body: {
+        "cloneId": cloneId,
+      },
+    );
+    final clonesResults = ClonesResultModel.fromJson(response);
+    return clonesResults;
+  }
+
+  @override
+  Future<ClonesResultModel> getNextVerifyNeededClones(String cloneId) async {
+    final response = await client.post(
+      "/clone/list/incompleted",
+      body: {
+        "cloneId": cloneId,
       },
     );
     final clonesResults = ClonesResultModel.fromJson(response);

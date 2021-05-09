@@ -40,4 +40,34 @@ class CloneRespositoryImpl extends CloneRepository {
       throw AppError("Something went wrong.");
     }
   }
+
+  @override
+  Future<ClonesResultEntity> getNextClones(String id) async {
+    try {
+      final clones = await remoteDataSource.getNextClones(id);
+      return clones;
+    } on Exception {
+      throw AppError("Something went wrong.");
+    }
+  }
+
+  @override
+  Future<ClonesResultEntity> getNextCompletedClones(String id) async {
+    try {
+      final clones = await remoteDataSource.getNextCompletedClones(id);
+      return clones;
+    } on Exception {
+      throw AppError("Something went wrong.");
+    }
+  }
+
+  @override
+  Future<ClonesResultEntity> getNextVerifyNeededClones(String id) async {
+    try {
+      final clones = await remoteDataSource.getNextVerifyNeededClones(id);
+      return clones;
+    } on Exception {
+      throw AppError("Something went wrong.");
+    }
+  }
 }

@@ -13,7 +13,7 @@ class CompletedCubit extends Cubit<FetchState> {
   final GetCompleted getCompleted;
   final GetNextCompleted getNextCompleted;
   List<CloneEntity> currentClones = [];
-
+  bool isFetching = false;
   CompletedCubit({
     required this.getCompleted,
     required this.getNextCompleted,
@@ -31,10 +31,17 @@ class CompletedCubit extends Cubit<FetchState> {
   }
 
   void fetchNextPage() async {
+    if (isFetching) {
+      return;
+    }
     emit(FetchInProgress(clones: currentClones));
     try {
+      isFetching = true;
       final cloneId = currentClones.last.cloneId;
       final completedClones = await getNextCompleted(CloneIdParam(cloneId));
+      Future.delayed(Duration(milliseconds: 500), () {
+        isFetching = false;
+      });
       currentClones = [...currentClones, ...completedClones.results];
       emit(FetchSuccess(clones: currentClones));
     } on AppError catch (e) {

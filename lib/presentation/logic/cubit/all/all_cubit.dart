@@ -13,7 +13,8 @@ class AllCubit extends Cubit<FetchState> {
   final GetClones getClones;
   final GetNextClones getNextClones;
   List<CloneEntity> currentClones = [];
-  late int nextPage;
+  bool isFetching = false;
+
   AllCubit({
     required this.getClones,
     required this.getNextClones,
@@ -22,7 +23,6 @@ class AllCubit extends Cubit<FetchState> {
   void fetchFirstPage() async {
     emit(FetchInitial());
     final allClones = await getClones(PageParam(1));
-    nextPage = allClones.page + 1;
     currentClones = allClones.results;
     if (allClones.results.isEmpty) {
       emit(FetchEmpty());
@@ -32,13 +32,17 @@ class AllCubit extends Cubit<FetchState> {
   }
 
   void fetchNextPage() async {
+    if (isFetching) {
+      return;
+    }
     emit(FetchInProgress(clones: currentClones));
     try {
+      isFetching = true;
       final cloneId = currentClones.last.cloneId;
       final allClones = await getNextClones(CloneIdParam(cloneId));
-      if (allClones.page <= allClones.totalPage) {
-        nextPage = allClones.page + 1;
-      }
+      Future.delayed(Duration(milliseconds: 500), () {
+        isFetching = false;
+      });
       currentClones = [...currentClones, ...allClones.results];
       emit(FetchSuccess(clones: currentClones));
     } on AppError catch (e) {

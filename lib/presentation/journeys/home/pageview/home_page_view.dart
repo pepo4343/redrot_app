@@ -1,6 +1,7 @@
 import 'package:auto_animated/auto_animated.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:redrotapp/common/constants/size_constants.dart';
 import 'package:redrotapp/domain/entities/clone_entity.dart';
 import 'package:redrotapp/presentation/journeys/home/detail_card/detail_card.dart';
 import 'package:redrotapp/presentation/logic/cubit/all/all_cubit.dart';
@@ -69,6 +70,7 @@ class _HomePageViewState extends State<HomePageView> {
         }
 
         return LiveList.options(
+          physics: BouncingScrollPhysics(),
           controller: _controller,
           itemBuilder: (context, index, animation) {
             return _buildAnimatedItem(
@@ -133,8 +135,8 @@ class _HomePageViewState extends State<HomePageView> {
     int index,
     Animation<double> animation,
     CloneEntity clone,
-  ) =>
-      FadeTransition(
+  ) {
+    return FadeTransition(
         opacity: Tween<double>(
           begin: 0,
           end: 1,
@@ -142,6 +144,6 @@ class _HomePageViewState extends State<HomePageView> {
         child: DetailCard(
           clone: clone,
           index: index,
-        ),
-      );
+        ));
+  }
 }

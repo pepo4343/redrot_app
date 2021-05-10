@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:redrotapp/domain/entities/page_param.dart';
 import 'package:redrotapp/domain/usecases/get_verifyneeded.dart';
 import 'package:redrotapp/presentation/router/app_router.dart';
@@ -20,9 +21,20 @@ void main() {
   runApp(RedrotApp());
 }
 
-class RedrotApp extends StatelessWidget {
+class RedrotApp extends StatefulWidget {
+  @override
+  _RedrotAppState createState() => _RedrotAppState();
+}
+
+class _RedrotAppState extends State<RedrotApp> {
   final AppRouter _appRouter = AppRouter();
-  // This widget is the root of your application.
+
+  @override
+  void initState() {
+    setOptimalDisplayMode();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Sizer(
@@ -36,5 +48,24 @@ class RedrotApp extends StatelessWidget {
         );
       },
     );
+  }
+
+  Future<void> setOptimalDisplayMode() async {
+    final List<DisplayMode> supported = await FlutterDisplayMode.supported;
+    final DisplayMode active = await FlutterDisplayMode.active;
+
+    final List<DisplayMode> sameResolution = supported
+        .where((DisplayMode m) =>
+            m.width == active.width && m.height == active.height)
+        .toList()
+          ..sort((DisplayMode a, DisplayMode b) =>
+              b.refreshRate.compareTo(a.refreshRate));
+
+    final DisplayMode mostOptimalMode =
+        sameResolution.isNotEmpty ? sameResolution.first : active;
+
+    /// This setting is per session.
+    /// Please ensure this was placed with `initState` of your root widget.
+    await FlutterDisplayMode.setPreferredMode(mostOptimalMode);
   }
 }

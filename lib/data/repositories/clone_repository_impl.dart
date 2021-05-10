@@ -26,7 +26,8 @@ class CloneRespositoryImpl extends CloneRepository {
     try {
       final clones = await remoteDataSource.getVerifyNeededClones(page);
       return clones;
-    } on Exception {
+    } on Exception catch (e) {
+      print(e);
       throw AppError("Something went wrong.");
     }
   }

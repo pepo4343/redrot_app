@@ -10,7 +10,7 @@ import 'package:redrotapp/presentation/logic/cubit/fetch_state.dart';
 class VerifyNeededCubit extends Cubit<FetchState> {
   final GetVerifyNeeded getVerifyNeeded;
   final GetNextVerifyNeeded getNextVerifyNeeded;
-
+  bool isFetching = false;
   List<CloneEntity> currentClones = [];
 
   VerifyNeededCubit({
@@ -30,11 +30,19 @@ class VerifyNeededCubit extends Cubit<FetchState> {
   }
 
   void fetchNextPage() async {
+    if (isFetching) {
+      return;
+    }
     emit(FetchInProgress(clones: currentClones));
     try {
+      isFetching = true;
       final cloneId = currentClones.last.cloneId;
       final verifyNeededClones =
           await getNextVerifyNeeded(CloneIdParam(cloneId));
+      Future.delayed(Duration(milliseconds: 500), () {
+        isFetching = false;
+      });
+
       currentClones = [...currentClones, ...verifyNeededClones.results];
       emit(FetchSuccess(clones: currentClones));
     } on AppError catch (e) {

@@ -24,10 +24,16 @@ class _DetailCardState extends State<DetailCard> {
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;
 
-    return Padding(
-      padding: const EdgeInsets.all(Sizes.dimen_8),
+    return Container(
+      margin: EdgeInsets.fromLTRB(
+        Sizes.dimen_8,
+        widget.index == 0 ? Sizes.dimen_16 : Sizes.dimen_8,
+        Sizes.dimen_8,
+        Sizes.dimen_8,
+      ),
       child: AnimatedCard(
         width: double.infinity,
+        sensitivity: 0.15,
         child: Padding(
           padding: const EdgeInsets.all(Sizes.dimen_8),
           child: Column(
@@ -38,7 +44,7 @@ class _DetailCardState extends State<DetailCard> {
                 widget.clone.cloneName,
                 style: textTheme.headline6,
               ),
-              SizedBox(
+              const SizedBox(
                 height: Sizes.dimen_8,
               ),
               DetailCardContent(
@@ -79,6 +85,8 @@ class DetailCardContent extends StatelessWidget {
     }
 
     if (numCompleted != numAll) {
+      final String percentageText =
+          (numCompleted / numAll * 100).toInt().toString();
       return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -90,11 +98,11 @@ class DetailCardContent extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             width: Sizes.dimen_8,
           ),
           DetailCardPercentageText(
-            percentage: (numCompleted / numAll * 100).toInt().toString(),
+            percentage: percentageText,
           )
         ],
       );

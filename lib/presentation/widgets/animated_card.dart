@@ -7,7 +7,13 @@ class AnimatedCard extends StatefulWidget {
   final VoidCallback? onTap;
   final double? width;
   final double? height;
-  AnimatedCard({required this.child, this.width, this.height, this.onTap});
+  final double sensitivity;
+  AnimatedCard(
+      {required this.child,
+      this.width,
+      this.height,
+      this.onTap,
+      this.sensitivity = 0.1});
 
   @override
   _AnimatedCardState createState() => _AnimatedCardState();
@@ -51,7 +57,8 @@ class _AnimatedCardState extends State<AnimatedCard>
     _rotateYAnimation = _rotateYTween.animate(_curvedAnimation);
 
     _scaleAnimation =
-        Tween<double>(begin: 1, end: 0.9).animate(_curvedAnimation);
+        Tween<double>(begin: 1, end: 0.95).animate(_curvedAnimation);
+
     super.initState();
   }
 
@@ -67,7 +74,7 @@ class _AnimatedCardState extends State<AnimatedCard>
     final localOffset = box.globalToLocal(details.globalPosition);
 
     double wMultiple = 320 / size.width;
-    double multiple = wMultiple * 0.1;
+    double multiple = wMultiple * widget.sensitivity;
     double offsetX = 0.52 - localOffset.dx / size.width;
     double offsetY = 0.52 - localOffset.dy / size.height;
 
@@ -75,15 +82,14 @@ class _AnimatedCardState extends State<AnimatedCard>
     double dx = localOffset.dx - (size.width / 2);
 
     double yRotate = (offsetX - dx) * multiple;
-    double xRotate =
-        (dy - offsetY) * (min(size.width / size.height, 1) * multiple);
+    double xRotate = (dy - offsetY) * multiple;
 
     _rotateXTween.end = _degToRad(xRotate);
     _rotateYTween.end = _degToRad(yRotate);
     _controller.forward();
   }
 
-  void onTapUp() {
+  void onTapUp(TapUpDetails _) {
     _statusListener = (status) {
       if (status == AnimationStatus.completed) {
         _controller.reverse();
@@ -111,29 +117,35 @@ class _AnimatedCardState extends State<AnimatedCard>
     return GestureDetector(
       onTapDown: (TapDownDetails detail) => onTapDown(context, detail),
       onTap: widget.onTap,
-      onTapUp: (_) => onTapUp(),
+      onTapUp: onTapUp,
       onTapCancel: () => _resetAnimation(),
-      child: Transform(
-        transform: Matrix4.identity()
-          ..setEntry(3, 2, 0.001)
-          ..rotateX(_rotateXAnimation.value)
-          ..rotateY(_rotateYAnimation.value)
-          ..scale(_scaleAnimation.value),
-        origin: Offset(size.width / 2, size.height / 2),
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) {
+          return Transform(
+            transform: Matrix4.identity()
+              ..setEntry(3, 2, 0.001)
+              ..rotateX(_rotateXAnimation.value)
+              ..rotateY(_rotateYAnimation.value)
+              ..scale(_scaleAnimation.value),
+            origin: Offset(size.width / 2, size.height / 2),
+            child: child,
+          );
+        },
         child: Container(
           height: widget.height,
           width: widget.width,
           key: _key,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(
-              Radius.circular(20),
+            borderRadius: const BorderRadius.all(
+              const Radius.circular(20),
             ),
             color: Colors.white,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.10),
+                color: Colors.black12,
                 blurRadius: 16,
-                offset: Offset(0, 4),
+                offset: const Offset(0, 4),
               ),
             ],
           ),
@@ -145,13 +157,7 @@ class _AnimatedCardState extends State<AnimatedCard>
 
   @override
   void afterFirstLayout(BuildContext context) {
-    _getSizes();
-  }
-
-  void _getSizes() {
     RenderBox renderBox = _key.currentContext!.findRenderObject() as RenderBox;
-    setState(() {
-      size = renderBox.size;
-    });
+    size = renderBox.size;
   }
 }

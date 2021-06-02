@@ -1,15 +1,22 @@
-import 'package:flare_flutter/flare_actor.dart';
+import 'dart:math';
+
+import 'package:after_layout/after_layout.dart';
+import 'package:circular_clip_route/circular_clip_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:redrotapp/common/constants/size_constants.dart';
 import 'package:redrotapp/di/get_it.dart';
 import 'package:redrotapp/presentation/journeys/home/pageview/home_page_view.dart';
-import 'package:redrotapp/presentation/logic/cubit/all/all_cubit.dart';
-import 'package:redrotapp/presentation/logic/cubit/completed/completed_cubit.dart';
-import 'package:redrotapp/presentation/logic/cubit/verify_needed/verify_needed_cubit.dart';
-import 'package:redrotapp/presentation/widgets/animated_card.dart';
-import 'package:redrotapp/presentation/widgets/loading_indicator.dart';
+import 'package:redrotapp/presentation/journeys/home/qr_fab.dart';
+import 'package:redrotapp/presentation/journeys/home/tab_bar/tab_bar.dart';
+import 'package:redrotapp/presentation/journeys/qr/qr_screen.dart';
+import 'package:redrotapp/presentation/logic/cubit/clone_list_view/clone_list_view_cubit.dart';
+import 'package:redrotapp/presentation/widgets/app_fab.dart';
+
 import 'package:redrotapp/presentation/widgets/redrot_app_bar.dart';
-import 'package:sizer/sizer.dart';
+import 'package:redrotapp/presentation/widgets/responsive.dart';
+
+import 'package:universal_platform/universal_platform.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -17,42 +24,65 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late VerifyNeededCubit verifyNeededCubit;
-  late CompletedCubit completedCubit;
-  late AllCubit allCubit;
+  PageController _pageController = PageController();
+
   @override
   void initState() {
-    verifyNeededCubit = getItInstance<VerifyNeededCubit>();
-    completedCubit = getItInstance<CompletedCubit>();
-    allCubit = getItInstance<AllCubit>();
     super.initState();
   }
 
   @override
   void dispose() {
-    verifyNeededCubit.close();
-    completedCubit.close();
-    allCubit.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (_) => verifyNeededCubit),
-        BlocProvider(create: (_) => completedCubit),
-        BlocProvider(create: (_) => allCubit),
-      ],
-      child: Scaffold(
+    return Scaffold(
         appBar: RedrotAppBar(
           title: "หน้าหลัก",
         ),
-        body: PageView.builder(
-          itemBuilder: (context, index) => HomePageView(index),
-          itemCount: 3,
-        ),
-      ),
-    );
+        floatingActionButton: UniversalPlatform.isWeb
+            ? null
+            : Builder(
+                builder: (context) {
+                  return AppFab(
+                    icon: Icons.qr_code,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        CircularClipRoute<void>(
+                          builder: (_) => QrScreen(),
+                          expandFrom: context,
+                          border: Border.all(
+                            width: Sizes.dimen_0,
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+        body: Responsive(
+          desktop: Placeholder(),
+          tablet: Placeholder(),
+          mobile: Column(
+            children: [
+              TabBarApp(pageController: _pageController),
+              Expanded(
+                child: PageView.builder(
+                  controller: _pageController,
+                  itemBuilder: (context, index) {
+                    return BlocProvider(
+                      create: (context) => getItInstance<CloneListViewCubit>(),
+                      child: HomePageView(index),
+                    );
+                  },
+                  itemCount: 3,
+                ),
+              ),
+            ],
+          ),
+        ));
   }
 }

@@ -1,16 +1,19 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
-import 'package:redrotapp/domain/entities/page_param.dart';
-import 'package:redrotapp/domain/usecases/get_verifyneeded.dart';
+import 'package:redrotapp/presentation/logic/cubit/clone_detail_cubit/clone_detail_cubit.dart';
+import 'package:redrotapp/presentation/logic/cubit/image_uploader/image_uploader_cubit.dart';
+import 'package:redrotapp/presentation/logic/cubit/theme/theme_cubit.dart';
 import 'package:redrotapp/presentation/router/app_router.dart';
 import 'package:redrotapp/presentation/themes/app_theme.dart';
-import 'package:sizer/sizer.dart';
 
-import 'common/screenutil/screenutil.dart';
 import 'package:pedantic/pedantic.dart';
 import './di/get_it.dart' as getIt;
-import 'domain/entities/app_error.dart';
+
+import 'package:universal_platform/universal_platform.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,35 +21,35 @@ void main() {
   unawaited(
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]),
   );
-  runApp(RedrotApp());
+  runApp(App());
 }
 
-class RedrotApp extends StatefulWidget {
+class App extends StatefulWidget {
   @override
-  _RedrotAppState createState() => _RedrotAppState();
+  _AppState createState() => _AppState();
 }
 
-class _RedrotAppState extends State<RedrotApp> {
-  final AppRouter _appRouter = AppRouter();
-
+class _AppState extends State<App> {
   @override
   void initState() {
-    setOptimalDisplayMode();
+    if (UniversalPlatform.isAndroid) {
+      setOptimalDisplayMode();
+    }
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Sizer(
-      builder: (context, orientation, deviceType) {
-        return MaterialApp(
-          title: 'Flutter Demo',
-          debugShowCheckedModeBanner: false,
-          theme: AppTheme.lightTheme,
-          themeMode: ThemeMode.light,
-          onGenerateRoute: _appRouter.onGenerateRoute,
-        );
-      },
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => ThemeCubit(),
+        ),
+        BlocProvider(
+          create: (context) => getIt.getItInstance<ImageUploaderCubit>(),
+        ),
+      ],
+      child: RedrotApp(),
     );
   }
 
@@ -64,8 +67,45 @@ class _RedrotAppState extends State<RedrotApp> {
     final DisplayMode mostOptimalMode =
         sameResolution.isNotEmpty ? sameResolution.first : active;
 
-    /// This setting is per session.
-    /// Please ensure this was placed with `initState` of your root widget.
     await FlutterDisplayMode.setPreferredMode(mostOptimalMode);
+  }
+}
+
+class RedrotApp extends StatefulWidget {
+  @override
+  _RedrotAppState createState() => _RedrotAppState();
+}
+
+class _RedrotAppState extends State<RedrotApp> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    context.read<ThemeCubit>().updateAppTheme();
+    WidgetsBinding.instance!.addObserver(this);
+    super.initState();
+  }
+
+  @override
+  void didChangePlatformBrightness() {
+    context.read<ThemeCubit>().updateAppTheme();
+    super.didChangePlatformBrightness();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance!.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode:
+          context.select((ThemeCubit themeCubit) => themeCubit.state.themeMode),
+      onGenerateRoute: AppRouter.onGenerateRoute,
+    );
   }
 }

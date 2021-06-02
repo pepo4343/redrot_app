@@ -8,7 +8,8 @@ class CloneModel extends CloneEntity {
   late DateTime createdAt;
   late DateTime updatedAt;
   late int iV;
-  late List<RedrotModel>? redrot;
+  late List<RedrotModel> redrot;
+  late CategoryModel? categories;
 
   CloneModel({
     required this.cloneId,
@@ -16,12 +17,15 @@ class CloneModel extends CloneEntity {
     required this.createdAt,
     required this.updatedAt,
     required this.iV,
-    this.redrot,
+    required this.redrot,
+    this.categories,
   }) : super(
-            cloneId: cloneId,
-            cloneName: cloneName,
-            createdAt: createdAt,
-            redrot: redrot);
+          cloneId: cloneId,
+          cloneName: cloneName,
+          createdAt: createdAt,
+          redrot: redrot,
+          categoryEntity: categories,
+        );
 
   factory CloneModel.fromJson(Map<String, dynamic> json) {
     List<RedrotModel> redrot = [];
@@ -35,6 +39,9 @@ class CloneModel extends CloneEntity {
         cloneId: json['_id'],
         cloneName: json['cloneName'],
         redrot: redrot,
+        categories: json['categoryData'] != null
+            ? CategoryModel.fromJson(json['categoryData'])
+            : null,
         createdAt: DateTime.parse(json['createdAt']),
         updatedAt: DateTime.parse(json['updatedAt']),
         iV: json['__v']);
@@ -134,6 +141,30 @@ class RawModel extends RawEntity {
       nodalTransgression: json['nodalTransgression'],
       lesionWidth: json['lesionWidth'],
       color: json['color'],
+    );
+  }
+}
+
+class CategoryModel extends CategoryEntity {
+  late double scoreAvg;
+  late int category;
+  late String categoryText;
+
+  CategoryModel({
+    required this.scoreAvg,
+    required this.category,
+    required this.categoryText,
+  }) : super(
+          category: category,
+          categoryText: categoryText,
+          scoreAvg: scoreAvg,
+        );
+
+  factory CategoryModel.fromJson(Map<String, dynamic> json) {
+    return CategoryModel(
+      scoreAvg: json['scoreAvg'].toDouble(),
+      category: json['category'],
+      categoryText: json['categoryText'],
     );
   }
 }

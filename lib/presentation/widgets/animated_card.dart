@@ -1,10 +1,11 @@
 import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
+import '../themes/app_theme.dart';
 
 class AnimatedCard extends StatefulWidget {
   final Widget child;
-  final VoidCallback? onTap;
+  final VoidCallback onTap;
   final double? width;
   final double? height;
   final double sensitivity;
@@ -12,7 +13,7 @@ class AnimatedCard extends StatefulWidget {
       {required this.child,
       this.width,
       this.height,
-      this.onTap,
+      required this.onTap,
       this.sensitivity = 0.1});
 
   @override
@@ -20,10 +21,8 @@ class AnimatedCard extends StatefulWidget {
 }
 
 class _AnimatedCardState extends State<AnimatedCard>
-    with AfterLayoutMixin<AnimatedCard>, SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin {
   GlobalKey _key = GlobalKey();
-
-  Size size = Size(0, 0);
 
   late AnimationController _controller;
   late Animation<double> _rotateXAnimation;
@@ -39,13 +38,12 @@ class _AnimatedCardState extends State<AnimatedCard>
   void initState() {
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 150),
+      duration: Duration(milliseconds: 100),
     );
     _curvedAnimation = CurvedAnimation(
       parent: _controller,
       curve: Curves.easeOut,
     );
-    _controller.addListener(() {});
 
     _rotateXTween = Tween<double>(begin: 0, end: 0.5);
     _rotateXAnimation = _rotateXTween.animate(_curvedAnimation)
@@ -67,11 +65,13 @@ class _AnimatedCardState extends State<AnimatedCard>
   }
 
   void onTapDown(BuildContext context, TapDownDetails details) {
-    // print('${details.globalPosition}');
     _controller.removeStatusListener(_statusListener);
     RenderBox box = context.findRenderObject() as RenderBox;
 
     final localOffset = box.globalToLocal(details.globalPosition);
+
+    RenderBox renderBox = _key.currentContext!.findRenderObject() as RenderBox;
+    Size size = renderBox.size;
 
     double wMultiple = 320 / size.width;
     double multiple = wMultiple * widget.sensitivity;
@@ -92,13 +92,13 @@ class _AnimatedCardState extends State<AnimatedCard>
   void onTapUp(TapUpDetails _) {
     _statusListener = (status) {
       if (status == AnimationStatus.completed) {
-        _controller.reverse();
+        _controller.reverse().then((value) => widget.onTap());
       }
     };
     if (_controller.isAnimating) {
       _controller.addStatusListener(_statusListener);
     } else {
-      _controller.reverse();
+      _controller.reverse().then((value) => widget.onTap());
     }
   }
 
@@ -116,19 +116,18 @@ class _AnimatedCardState extends State<AnimatedCard>
   Widget build(BuildContext context) {
     return GestureDetector(
       onTapDown: (TapDownDetails detail) => onTapDown(context, detail),
-      onTap: widget.onTap,
       onTapUp: onTapUp,
       onTapCancel: () => _resetAnimation(),
       child: AnimatedBuilder(
         animation: _controller,
         builder: (context, child) {
           return Transform(
+            alignment: FractionalOffset.center,
             transform: Matrix4.identity()
               ..setEntry(3, 2, 0.001)
               ..rotateX(_rotateXAnimation.value)
               ..rotateY(_rotateYAnimation.value)
               ..scale(_scaleAnimation.value),
-            origin: Offset(size.width / 2, size.height / 2),
             child: child,
           );
         },
@@ -140,24 +139,12 @@ class _AnimatedCardState extends State<AnimatedCard>
             borderRadius: const BorderRadius.all(
               const Radius.circular(20),
             ),
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 16,
-                offset: const Offset(0, 4),
-              ),
-            ],
+            color: Theme.of(context).colorScheme.cardColor,
+            boxShadow: Theme.of(context).primaryBoxShadows,
           ),
           child: widget.child,
         ),
       ),
     );
-  }
-
-  @override
-  void afterFirstLayout(BuildContext context) {
-    RenderBox renderBox = _key.currentContext!.findRenderObject() as RenderBox;
-    size = renderBox.size;
   }
 }

@@ -6,12 +6,14 @@ class CloneEntity extends Equatable {
   final String cloneId;
   final String cloneName;
   final DateTime createdAt;
-  final List<RedrotEntity>? redrot;
+  final List<RedrotEntity> redrot;
+  final CategoryEntity? categoryEntity;
   CloneEntity({
     required this.cloneId,
     required this.cloneName,
     required this.createdAt,
-    this.redrot,
+    required this.redrot,
+    this.categoryEntity,
   });
 
   @override
@@ -68,5 +70,17 @@ class RawEntity {
     required this.nodalTransgression,
     required this.lesionWidth,
     required this.color,
+  });
+}
+
+class CategoryEntity {
+  final double scoreAvg;
+  final int category;
+  final String categoryText;
+
+  CategoryEntity({
+    required this.scoreAvg,
+    required this.category,
+    required this.categoryText,
   });
 }

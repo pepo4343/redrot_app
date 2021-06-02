@@ -1,22 +1,53 @@
 PODS:
   - Flutter (1.0.0)
+  - images_picker (0.0.1):
+    - Flutter
+    - ZLPhotoBrowser (= 4.1.5)
+  - MTBBarcodeScanner (5.0.11)
   - path_provider (0.0.1):
     - Flutter
+  - qr_code_scanner (0.2.0):
+    - Flutter
+    - MTBBarcodeScanner
+  - shared_preferences (0.0.1):
+    - Flutter
+  - ZLPhotoBrowser (4.1.5):
+    - ZLPhotoBrowser/Core (= 4.1.5)
+  - ZLPhotoBrowser/Core (4.1.5)
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
+  - images_picker (from `.symlinks/plugins/images_picker/ios`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
+  - qr_code_scanner (from `.symlinks/plugins/qr_code_scanner/ios`)
+  - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
+
+SPEC REPOS:
+  trunk:
+    - MTBBarcodeScanner
+    - ZLPhotoBrowser
 
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
+  images_picker:
+    :path: ".symlinks/plugins/images_picker/ios"
   path_provider:
     :path: ".symlinks/plugins/path_provider/ios"
+  qr_code_scanner:
+    :path: ".symlinks/plugins/qr_code_scanner/ios"
+  shared_preferences:
+    :path: ".symlinks/plugins/shared_preferences/ios"
 
 SPEC CHECKSUMS:
   Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
+  images_picker: 634f7663456c00364e7d1a16116c2cc2562ff50f
+  MTBBarcodeScanner: f453b33c4b7dfe545d8c6484ed744d55671788cb
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
+  qr_code_scanner: bb67d64904c3b9658ada8c402e8b4d406d5d796e
+  shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
+  ZLPhotoBrowser: 809878607ea92e9411c580797ce1be23896b8d7f
 
-PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
+PODFILE CHECKSUM: fe0e1ee7f3d1f7d00b11b474b62dd62134535aea
 
 COCOAPODS: 1.10.1

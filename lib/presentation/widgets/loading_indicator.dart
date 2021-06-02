@@ -9,10 +9,13 @@ import 'package:redrotapp/common/constants/size_constants.dart';
 
 class LoadingIndicator extends StatefulWidget {
   final double width, height;
-
-  const LoadingIndicator(
-      {Key? key, this.width = Sizes.dimen_80, this.height = Sizes.dimen_80})
-      : super(key: key);
+  final Color? color;
+  const LoadingIndicator({
+    Key? key,
+    this.width = Sizes.dimen_80,
+    this.height = Sizes.dimen_80,
+    this.color,
+  }) : super(key: key);
 
   @override
   _LoadingIndicatorState createState() => _LoadingIndicatorState();
@@ -32,6 +35,9 @@ class _LoadingIndicatorState extends State<LoadingIndicator> {
             : FlareActor(
                 "assets/flares/square_loading.flr",
                 animation: "SlideThem",
+                color: widget.color != null
+                    ? widget.color
+                    : Theme.of(context).colorScheme.secondary,
               );
       }),
     );

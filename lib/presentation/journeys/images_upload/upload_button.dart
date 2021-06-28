@@ -46,9 +46,6 @@ class _UploadButtonState extends State<UploadButton> {
           _isError = controller.findInput('isError');
         }
 
-        _isError?.value = false;
-        _isSuccess?.value = false;
-        _isUploading?.value = false;
         setState(() => _riveArtboard = artboard);
       },
     );
@@ -167,6 +164,7 @@ class _UploadButtonState extends State<UploadButton> {
                           _text,
                           overflow: TextOverflow.clip,
                           maxLines: 1,
+                          softWrap: false,
                           key: ValueKey<String>(_text),
                           style: theme.textTheme.bodyText1!
                               .copyWith(color: theme.colorScheme.onSecondary),

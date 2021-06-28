@@ -5,6 +5,7 @@ import 'package:redrotapp/di/get_it.dart';
 import 'package:redrotapp/domain/entities/clone_entity.dart';
 import 'package:redrotapp/presentation/journeys/clone_detail/fab_add_redrot.dart';
 import 'package:redrotapp/presentation/journeys/clone_detail/redrot_card.dart';
+import 'package:redrotapp/presentation/logic/cubit/authentication/authentication_cubit.dart';
 import 'package:redrotapp/presentation/logic/cubit/image_uploader/image_uploader_cubit.dart';
 import 'package:redrotapp/presentation/router/app_router.dart';
 import 'package:redrotapp/presentation/widgets/app_fab.dart';
@@ -12,6 +13,7 @@ import 'package:redrotapp/presentation/logic/cubit/clone_detail_cubit/clone_deta
 import 'package:redrotapp/presentation/logic/cubit/clone_detail_cubit/clone_detail_state.dart';
 import 'package:redrotapp/presentation/widgets/animated_card.dart';
 import 'package:redrotapp/presentation/widgets/clone_card/clone_card.dart';
+import 'package:redrotapp/presentation/widgets/error_container.dart';
 import 'package:redrotapp/presentation/widgets/loading_indicator.dart';
 
 import 'package:redrotapp/presentation/widgets/redrot_app_bar.dart';
@@ -43,6 +45,10 @@ class _CloneDetailScreenState extends State<CloneDetailScreen> {
           title: widget.clone.cloneName,
         ),
         floatingActionButton: Builder(builder: (context) {
+          final authenticationState = context.read<AuthenticationCubit>().state;
+          if (authenticationState is AuthenticationGuestAnthenticated) {
+            return SizedBox();
+          }
           return MultipleItemsFloatingActionButton(
             items: [
               FloatingActionButtonItem(
@@ -90,13 +96,11 @@ class _CloneDetailScreenState extends State<CloneDetailScreen> {
           tablet: Placeholder(),
           mobile: Column(
             children: [
-              SizedBox(
-                height: Sizes.dimen_8,
-              ),
               Expanded(
                 child: Builder(builder: (context) {
                   CloneEntity clone = widget.clone;
                   final state = context.watch<CloneDetailCubit>().state;
+
                   Widget content = Container();
                   if (state is CloneDetailFetchInitial) {
                     content = _RedrotListView(clone: clone);
@@ -109,15 +113,31 @@ class _CloneDetailScreenState extends State<CloneDetailScreen> {
                     clone = state.clone;
                     content = _RedrotListView(clone: clone);
                   }
+
+                  if (state is CloneDetailFetchFailure) {
+                    content = Center(
+                      child: ErrorContainer(onRefresh: () {
+                        context.read<CloneDetailCubit>().fetch(clone.cloneId);
+                      }),
+                    );
+                  }
                   if (state is CloneDetailFetchInProgress) {
                     content = Center(
                       child: LoadingIndicator(),
                     );
                   }
 
-                  return AnimatedSwitcher(
-                    duration: Duration(milliseconds: 300),
-                    child: content,
+                  return WillPopScope(
+                    onWillPop: () async {
+                      Navigator.of(context).pop(clone);
+                      return false;
+                    },
+                    child: AnimatedSwitcher(
+                      duration: Duration(milliseconds: 300),
+                      layoutBuilder: (currentChild, previousChildren) =>
+                          currentChild!,
+                      child: content,
+                    ),
                   );
                 }),
               ),
@@ -150,7 +170,6 @@ class _RedrotListView extends StatelessWidget {
       color: Colors.white,
       backgroundColor: Theme.of(context).colorScheme.secondary,
       onRefresh: () async {
-        print('');
         context.read<CloneDetailCubit>().fetch(clone.cloneId);
       },
       child: ListView.builder(
@@ -172,8 +191,8 @@ class _RedrotListView extends StatelessWidget {
           final redrotIndex = index - 1;
           return _buildAnimatedItem(
             context,
-            index,
-            clone.redrot[redrotIndex],
+            redrotIndex,
+            clone,
           );
         },
         itemCount: clone.redrot.length + 1,
@@ -184,9 +203,17 @@ class _RedrotListView extends StatelessWidget {
   Widget _buildAnimatedItem(
     BuildContext context,
     int index,
-    RedrotEntity redrotEntity,
+    CloneEntity cloneEntity,
   ) =>
       RedrotCard(
-        redrotEntity: redrotEntity,
+        redrotEntity: cloneEntity.redrot[index],
+        onPressed: () async {
+          final argument = RedrotDetailScreenArguments(
+              clone: cloneEntity, redrotId: cloneEntity.redrot[index].redrotId);
+          CloneEntity clone = await Navigator.of(context)
+              .pushNamed("/redrotdetail", arguments: argument) as CloneEntity;
+
+          context.read<CloneDetailCubit>().set(clone);
+        },
       );
 }

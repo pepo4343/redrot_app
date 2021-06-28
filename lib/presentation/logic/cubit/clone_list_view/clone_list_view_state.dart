@@ -1,12 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:redrotapp/domain/entities/clone_entity.dart';
 
-abstract class CloneListViewFetchState extends Equatable {
-  const CloneListViewFetchState();
-
-  @override
-  List<Object> get props => [];
-}
+abstract class CloneListViewFetchState {}
 
 class CloneListViewFetchInitial extends CloneListViewFetchState {}
 

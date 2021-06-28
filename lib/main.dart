@@ -1,11 +1,17 @@
 import 'dart:io';
 
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:redrotapp/presentation/logic/cubit/authentication/authentication_cubit.dart';
+import 'package:redrotapp/presentation/logic/cubit/auto_login/auto_login_cubit.dart';
 import 'package:redrotapp/presentation/logic/cubit/clone_detail_cubit/clone_detail_cubit.dart';
 import 'package:redrotapp/presentation/logic/cubit/image_uploader/image_uploader_cubit.dart';
+import 'package:redrotapp/presentation/logic/cubit/internet/internet_cubit.dart';
 import 'package:redrotapp/presentation/logic/cubit/theme/theme_cubit.dart';
 import 'package:redrotapp/presentation/router/app_router.dart';
 import 'package:redrotapp/presentation/themes/app_theme.dart';
@@ -15,18 +21,26 @@ import './di/get_it.dart' as getIt;
 
 import 'package:universal_platform/universal_platform.dart';
 
-void main() {
+main() async {
   WidgetsFlutterBinding.ensureInitialized();
   unawaited(getIt.init());
   unawaited(
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]),
   );
-  runApp(App());
+
+  HydratedBloc.storage = await HydratedStorage.build(
+    storageDirectory: await getApplicationDocumentsDirectory(),
+  );
+  runApp(App(
+    connectivity: Connectivity(),
+  ));
 }
 
 class App extends StatefulWidget {
+  App({required this.connectivity});
   @override
   _AppState createState() => _AppState();
+  final Connectivity connectivity;
 }
 
 class _AppState extends State<App> {
@@ -47,6 +61,15 @@ class _AppState extends State<App> {
         ),
         BlocProvider(
           create: (context) => getIt.getItInstance<ImageUploaderCubit>(),
+        ),
+        BlocProvider(
+          create: (context) => InternetCubit(connectivity: widget.connectivity),
+        ),
+        BlocProvider(
+          create: (context) => getIt.getItInstance<AuthenticationCubit>(),
+        ),
+        BlocProvider(
+          create: (context) => getIt.getItInstance<AutoLoginCubit>(),
         ),
       ],
       child: RedrotApp(),
@@ -99,8 +122,7 @@ class _RedrotAppState extends State<RedrotApp> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      debugShowCheckedModeBanner: false,
+      title: 'Redrot Application',
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode:

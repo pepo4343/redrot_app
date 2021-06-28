@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:redrotapp/domain/entities/clone_entity.dart';
 import 'package:redrotapp/presentation/logic/cubit/clone_detail_cubit/clone_detail_cubit.dart';
 import 'package:redrotapp/presentation/logic/cubit/clone_list_view/clone_list_view_cubit.dart';
 import 'package:redrotapp/presentation/logic/cubit/clone_list_view/clone_list_view_state.dart';
@@ -18,9 +19,12 @@ class AddCloneBody extends StatelessWidget {
       return CloneListView(
         onRefresh: () =>
             context.read<CloneListViewCubit>().fetchByName(cloneName),
-        onItemTap: (clone) {
-          Navigator.of(context)
-              .pushNamed('addredrot', arguments: clone.cloneName);
+        onItemTap: (clone) async {
+          CloneEntity newClone = await Navigator.of(context)
+                  .pushReplacementNamed('/clonedetail', arguments: clone)
+              as CloneEntity;
+
+          context.read<CloneListViewCubit>().set(newClone);
         },
         fetchState: fetchState,
       );

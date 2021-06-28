@@ -17,6 +17,7 @@ abstract class AppColors {
   Color get successColor;
   Color get warningColor;
   Color get errorColor;
+  Color get darkColor;
   Color get shimmerBackgroundColor;
   Color get shimmerHighlightColor;
 }
@@ -55,28 +56,25 @@ class AppLightColors extends AppColors {
   Color get errorColor => const Color(0xFFF27C8C);
 
   @override
-  // TODO: implement successColor
   Color get successColor => const Color(0xFF6BCC85);
 
   @override
-  // TODO: implement warningColor
   Color get warningColor => const Color(0xFFFFD141);
 
   @override
-  // TODO: implement onPrimary
   Color get onPrimaryColor => const Color(0xFF414141);
 
   @override
-  // TODO: implement onSecondary
   Color get onSecondaryColor => const Color(0xFFFAFAFA);
 
   @override
-  // TODO: implement shimmerBackgroundColor
   Color get shimmerBackgroundColor => Colors.black12;
 
   @override
-  // TODO: implement shimmerHighlightColor
   Color get shimmerHighlightColor => Colors.white12;
+
+  @override
+  Color get darkColor => const Color(0xFF414141);
 }
 
 class AppDarkColors extends AppColors {
@@ -92,7 +90,7 @@ class AppDarkColors extends AppColors {
   Color get cardColor => const Color(0xFF2F2F2F);
 
   @override
-  Color get disableColor => const Color(0xFF2D2D2D);
+  Color get disableColor => const Color(0xFF797979);
 
   @override
   Color get primaryColor => const Color(0xFF121212);
@@ -113,26 +111,23 @@ class AppDarkColors extends AppColors {
   Color get errorColor => const Color(0xFFEC7887);
 
   @override
-  // TODO: implement successColor
   Color get successColor => const Color(0xFF74B185);
 
   @override
-  // TODO: implement warningColor
   Color get warningColor => const Color(0xFFFFD653);
 
   @override
-  // TODO: implement onPrimary
   Color get onPrimaryColor => const Color(0xFFEAECF5);
 
   @override
-  // TODO: implement onSecondary
   Color get onSecondaryColor => const Color(0xFFEAECF5);
 
   @override
-  // TODO: implement shimmerBackgroundColor
   Color get shimmerBackgroundColor => Colors.white12;
 
   @override
-  // TODO: implement shimmerHighlightColor
   Color get shimmerHighlightColor => Colors.white24;
+
+  @override
+  Color get darkColor => const Color(0xFF464646);
 }

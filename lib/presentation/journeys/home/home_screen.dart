@@ -11,12 +11,15 @@ import 'package:redrotapp/presentation/journeys/home/qr_fab.dart';
 import 'package:redrotapp/presentation/journeys/home/tab_bar/tab_bar.dart';
 import 'package:redrotapp/presentation/journeys/qr/qr_screen.dart';
 import 'package:redrotapp/presentation/logic/cubit/clone_list_view/clone_list_view_cubit.dart';
+import 'package:redrotapp/presentation/logic/cubit/internet/internet_cubit.dart';
 import 'package:redrotapp/presentation/widgets/app_fab.dart';
+import 'package:redrotapp/presentation/widgets/internet_snackbar.dart';
 
 import 'package:redrotapp/presentation/widgets/redrot_app_bar.dart';
 import 'package:redrotapp/presentation/widgets/responsive.dart';
 
 import 'package:universal_platform/universal_platform.dart';
+import '../../themes/app_theme.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -47,9 +50,13 @@ class _HomeScreenState extends State<HomeScreen> {
             : Builder(
                 builder: (context) {
                   return AppFab(
-                    icon: Icons.qr_code,
-                    onPressed: () {
-                      Navigator.push(
+                    child: Icon(
+                      Icons.qr_code,
+                      color: Theme.of(context).colorScheme.onSecondary,
+                      size: Sizes.dimen_24,
+                    ),
+                    onPressed: () async {
+                      await Navigator.push(
                         context,
                         CircularClipRoute<void>(
                           builder: (_) => QrScreen(),
@@ -59,29 +66,34 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                       );
+                      await Future.delayed(Duration(milliseconds: 300));
+                      Navigator.of(context).pushReplacementNamed("/home");
                     },
                   );
                 },
               ),
-        body: Responsive(
-          desktop: Placeholder(),
-          tablet: Placeholder(),
-          mobile: Column(
-            children: [
-              TabBarApp(pageController: _pageController),
-              Expanded(
-                child: PageView.builder(
-                  controller: _pageController,
-                  itemBuilder: (context, index) {
-                    return BlocProvider(
-                      create: (context) => getItInstance<CloneListViewCubit>(),
-                      child: HomePageView(index),
-                    );
-                  },
-                  itemCount: 3,
+        body: InternetSnackBar(
+          child: Responsive(
+            desktop: Placeholder(),
+            tablet: Placeholder(),
+            mobile: Column(
+              children: [
+                TabBarApp(pageController: _pageController),
+                Expanded(
+                  child: PageView.builder(
+                    controller: _pageController,
+                    itemBuilder: (context, index) {
+                      return BlocProvider(
+                        create: (context) =>
+                            getItInstance<CloneListViewCubit>(),
+                        child: HomePageView(index),
+                      );
+                    },
+                    itemCount: 3,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ));
   }

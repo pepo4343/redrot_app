@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:redrotapp/common/constants/size_constants.dart';
 import 'package:redrotapp/presentation/widgets/tap_detector.dart';
+import '../themes/app_theme.dart';
 
 class PrimaryButton extends StatelessWidget {
   final VoidCallback onPressed;
@@ -26,12 +27,7 @@ class PrimaryButton extends StatelessWidget {
             borderRadius: BorderRadius.all(
               Radius.circular(5),
             ),
-            boxShadow: [
-              BoxShadow(
-                  blurRadius: 16,
-                  color: theme.colorScheme.secondary.withOpacity(0.8),
-                  offset: Offset(0, 4))
-            ]),
+            boxShadow: theme.secondaryBoxShadows),
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: Sizes.dimen_4),
           child: Center(

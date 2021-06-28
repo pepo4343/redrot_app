@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:redrotapp/common/enum.dart';
 import 'package:redrotapp/common/functions.dart';
 import 'package:redrotapp/domain/entities/clone_entity.dart';
@@ -139,7 +141,7 @@ class RawModel extends RawEntity {
   factory RawModel.fromJson(Map<String, dynamic> json) {
     return RawModel(
       nodalTransgression: json['nodalTransgression'],
-      lesionWidth: json['lesionWidth'],
+      lesionWidth: json['lesionWidth'] + .0,
       color: json['color'],
     );
   }

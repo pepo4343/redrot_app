@@ -24,10 +24,19 @@ class _VerifyNeededBodyState extends State<VerifyNeededBody>
     duration: const Duration(milliseconds: 1000),
     vsync: this,
   );
-  late Animation<double> _progressAnimation;
+  Animation<double>? _progressAnimation;
   double percentage = 0;
+  void _animationListener() {
+    setState(() {
+      percentage = ((_progressAnimation?.value ?? 0) * 100);
+    });
+  }
+
   @override
-  void initState() {
+  void didChangeDependencies() {
+    _controller.reset();
+    _progressAnimation?.removeListener(_animationListener);
+
     _progressAnimation =
         Tween<double>(begin: 0, end: numCompleted / numAll).animate(
       CurvedAnimation(
@@ -38,14 +47,14 @@ class _VerifyNeededBodyState extends State<VerifyNeededBody>
           curve: Curves.ease,
         ),
       ),
-    )..addListener(() {
-            setState(() {
-              percentage = (_progressAnimation.value * 100);
-            });
-          });
+    )..addListener(_animationListener);
 
     _controller.forward();
+    super.didChangeDependencies();
+  }
 
+  @override
+  void initState() {
     super.initState();
   }
 
@@ -68,7 +77,7 @@ class _VerifyNeededBodyState extends State<VerifyNeededBody>
             child: ProgressBar(
               all: numAll,
               completed: numCompleted,
-              progress: _progressAnimation.value,
+              progress: _progressAnimation?.value ?? 0,
             ),
           ),
         ),

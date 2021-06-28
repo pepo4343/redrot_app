@@ -16,22 +16,10 @@ class CloneDetailCubit extends Cubit<CloneDetailFetchState> {
     required this.getCloneById,
   }) : super(CloneDetailFetchInitial());
 
-  Future<CloneEntity?> create(String cloneName) async {
-    emit(CloneDetailFetchInProgress());
-    try {
-      final createdClone = await createClone(CloneNameParam(cloneName));
-      emit(CloneDetailFetchSuccess(clone: createdClone));
-      return createdClone;
-    } on AppError catch (e) {
-      emit(CloneDetailFetchFailure());
-    }
-  }
-
   fetch(String cloneId) async {
     emit(CloneDetailFetchInProgress());
     try {
       final clone = await getCloneById(CloneIdParam(cloneId));
-      await Future.delayed(Duration(milliseconds: 200));
       if (clone.redrot.isEmpty) {
         emit(CloneDetailFetchEmpty(clone: clone));
         return;
@@ -40,5 +28,9 @@ class CloneDetailCubit extends Cubit<CloneDetailFetchState> {
     } on AppError catch (e) {
       emit(CloneDetailFetchFailure());
     }
+  }
+
+  set(CloneEntity clone) {
+    emit(CloneDetailFetchSuccess(clone: clone));
   }
 }

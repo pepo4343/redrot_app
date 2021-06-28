@@ -28,7 +28,6 @@ class CloneRespositoryImpl extends CloneRepository {
       final clones = await remoteDataSource.getVerifyNeededClones(page);
       return clones;
     } on Exception catch (e) {
-      print(e);
       throw AppError("Something went wrong.");
     }
   }
@@ -108,6 +107,34 @@ class CloneRespositoryImpl extends CloneRepository {
     try {
       final clones =
           await remoteDataSource.uploadRedrotImage(cloneId, imageUrl);
+      return clones;
+    } on Exception catch (e) {
+      print(e);
+      throw AppError("Something went wrong.");
+    }
+  }
+
+  @override
+  Future<CloneEntity> confirmRedrot(String redrotId) async {
+    try {
+      final clones = await remoteDataSource.confirmRedrot(redrotId);
+      return clones;
+    } on Exception catch (e) {
+      print(e);
+      throw AppError("Something went wrong.");
+    }
+  }
+
+  @override
+  Future<CloneEntity> editRedrot(String redrotId, int nodalTransgression,
+      double lesionWidth, int color) async {
+    try {
+      final clones = await remoteDataSource.editRedrot(
+        redrotId,
+        nodalTransgression,
+        lesionWidth,
+        color,
+      );
       return clones;
     } on Exception catch (e) {
       print(e);

@@ -6,6 +6,7 @@ import 'package:redrotapp/common/constants/size_constants.dart';
 import 'package:redrotapp/presentation/themes/app_colors.dart';
 import 'package:redrotapp/presentation/widgets/primary_button.dart';
 import 'package:redrotapp/presentation/widgets/redrot_app_bar.dart';
+import 'package:redrotapp/presentation/widgets/redrot_dark_app_bar.dart';
 import 'package:redrotapp/presentation/widgets/secondary_button.dart';
 import '../../themes/app_theme.dart';
 
@@ -34,6 +35,9 @@ class _QrScreenState extends State<QrScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: RedrotDarkAppBar(
+        title: "โปรดแสกน QR code",
+      ),
       body: Stack(
         children: [
           QRView(

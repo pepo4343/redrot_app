@@ -5,10 +5,10 @@ import '../themes/app_theme.dart';
 
 class AppFab extends StatelessWidget {
   static const double buttonSize = Sizes.dimen_60;
-  final IconData icon;
+  final Widget child;
   final VoidCallback onPressed;
   AppFab({
-    required this.icon,
+    required this.child,
     required this.onPressed,
   });
 
@@ -29,11 +29,7 @@ class AppFab extends StatelessWidget {
           ),
           width: AppFab.buttonSize,
           height: AppFab.buttonSize,
-          child: Icon(
-            icon,
-            color: theme.colorScheme.onSecondary,
-            size: Sizes.dimen_24,
-          ),
+          child: child,
         ),
       ),
     );

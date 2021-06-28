@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:redrotapp/common/constants/size_constants.dart';
 import 'package:redrotapp/domain/entities/clone_entity.dart';
+import 'package:redrotapp/presentation/logic/cubit/clone_list_view/clone_list_view_cubit.dart';
 import 'package:redrotapp/presentation/logic/cubit/clone_list_view/clone_list_view_state.dart';
 import 'package:redrotapp/presentation/widgets/clone_card/clone_card.dart';
-
+import 'package:redrotapp/presentation/widgets/error_container.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../loading_indicator.dart';
 
 class CloneListView extends StatefulWidget {
@@ -56,6 +58,7 @@ class _CloneListViewState extends State<CloneListView> {
   Widget build(BuildContext context) {
     Widget pageContent = Container();
     List<CloneEntity> clones;
+
     if (widget.fetchState is CloneListViewFetchInProgress) {
       pageContent = Center(
         child: LoadingIndicator(),
@@ -72,8 +75,23 @@ class _CloneListViewState extends State<CloneListView> {
       pageContent = _buildListView(
           clones, widget.fetchState is CloneListViewFetchNextPageInProgress);
     }
+
+    if (widget.fetchState is CloneListViewFetchFailure) {
+      return Center(
+        child: ErrorContainer(
+          onRefresh: () {
+            widget.onRefresh();
+          },
+        ),
+      );
+    }
     if (widget.fetchState is CloneListViewFetchEmpty) {
-      pageContent = Text("ไม่พบข้อมูล");
+      pageContent = Center(
+        child: Text(
+          "ไม่พบข้อมูล",
+          style: Theme.of(context).textTheme.bodyText1,
+        ),
+      );
     }
     if (widget.fetchState is CloneListViewFetchFailure) {
       pageContent = Text("ผิดผลาด");
@@ -82,6 +100,7 @@ class _CloneListViewState extends State<CloneListView> {
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 300),
       child: pageContent,
+      layoutBuilder: (currentChild, previousChildren) => currentChild!,
     );
   }
 

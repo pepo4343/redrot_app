@@ -11,6 +11,7 @@ import 'package:redrotapp/domain/entities/clone_entity.dart';
 import 'package:redrotapp/presentation/journeys/clone_detail/fab_add_redrot.dart';
 import 'package:redrotapp/presentation/journeys/images_upload/upload_button.dart';
 import 'package:redrotapp/presentation/logic/cubit/image_uploader/image_uploader_cubit.dart';
+import 'package:redrotapp/presentation/widgets/checkmark.dart';
 import 'package:redrotapp/presentation/widgets/loading_indicator.dart';
 
 import 'package:redrotapp/presentation/widgets/redrot_app_bar.dart';
@@ -225,10 +226,9 @@ class _RedrotImagePreviewState extends State<_RedrotImagePreview>
     if (widget.redrotImage.status == ImageUploadStatus.Success) {
       return Center(
         key: ValueKey<int>(2),
-        child: Icon(
-          Icons.check_circle_outline_rounded,
+        child: CheckMark(
           size: Sizes.dimen_48,
-          color: theme.colorScheme.successColor,
+          isFill: false,
         ),
       );
     }
@@ -243,6 +243,7 @@ class _RedrotImagePreviewState extends State<_RedrotImagePreview>
         ),
       );
     }
+
     return Container();
   }
 

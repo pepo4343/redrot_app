@@ -22,4 +22,13 @@ abstract class CloneRepository {
   Future<CloneEntity> createClone(String cloneName);
 
   Future<CloneEntity> uploadRedrotImage(String cloneId, String imageUrl);
+
+  Future<CloneEntity> confirmRedrot(String redrotId);
+
+  Future<CloneEntity> editRedrot(
+    String redrotId,
+    int nodalTransgression,
+    double lesionWidth,
+    int color,
+  );
 }

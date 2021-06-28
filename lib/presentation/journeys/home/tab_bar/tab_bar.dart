@@ -5,7 +5,7 @@ import 'package:redrotapp/presentation/journeys/home/tab_bar/tab_bar_chip.dart';
 
 class TabBarApp extends StatelessWidget {
   double barWidth = Sizes.dimen_300;
-  final double barHeight = Sizes.dimen_40;
+  final double barHeight = 36;
   final PageController pageController;
 
   TabBarApp({required this.pageController});

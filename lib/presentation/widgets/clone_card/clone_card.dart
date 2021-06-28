@@ -42,8 +42,8 @@ class CloneCard extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.all(Sizes.dimen_8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Wrap(
+                clipBehavior: Clip.hardEdge,
                 children: [
                   FittedBox(
                     child: Text(
@@ -53,6 +53,7 @@ class CloneCard extends StatelessWidget {
                   ),
                   SizedBox(
                     height: Sizes.dimen_8,
+                    width: double.infinity,
                   ),
                   CloneCardBody(
                     cloneEntity: clone,
@@ -60,6 +61,7 @@ class CloneCard extends StatelessWidget {
                   ),
                   SizedBox(
                     height: Sizes.dimen_8,
+                    width: double.infinity,
                   ),
                   Align(
                     alignment: Alignment.bottomRight,

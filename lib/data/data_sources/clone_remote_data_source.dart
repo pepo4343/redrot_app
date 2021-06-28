@@ -21,6 +21,14 @@ abstract class CloneRemoteDataSource {
     String cloneId,
     String imagePath,
   );
+
+  Future<CloneModel> confirmRedrot(String redrotId);
+  Future<CloneModel> editRedrot(
+    String redrotId,
+    int nodalTransgression,
+    double lesionWidth,
+    int color,
+  );
 }
 
 class CloneRemoteDataSourceImpl extends CloneRemoteDataSource {
@@ -143,6 +151,38 @@ class CloneRemoteDataSourceImpl extends CloneRemoteDataSource {
       "/clone/redrot/add",
       imagePath,
       cloneId,
+    );
+    final cloneResults = CloneModel.fromJson(response);
+    return cloneResults;
+  }
+
+  @override
+  Future<CloneModel> confirmRedrot(String redrotId) async {
+    final response = await client.post(
+      "/clone/redrot/confirm",
+      body: {
+        "redrotId": redrotId,
+      },
+    );
+    final cloneResults = CloneModel.fromJson(response);
+    return cloneResults;
+  }
+
+  @override
+  Future<CloneModel> editRedrot(
+    String redrotId,
+    int nodalTransgression,
+    double lesionWidth,
+    int color,
+  ) async {
+    final response = await client.post(
+      "/clone/redrot/edit",
+      body: {
+        "redrotId": redrotId,
+        "nodalTransgression": nodalTransgression,
+        "lesionWidth": lesionWidth,
+        "color": color
+      },
     );
     final cloneResults = CloneModel.fromJson(response);
     return cloneResults;

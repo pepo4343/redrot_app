@@ -15,6 +15,7 @@ import 'package:redrotapp/domain/usecases/get_next_clones.dart';
 import 'package:redrotapp/domain/usecases/get_next_completed.dart';
 import 'package:redrotapp/domain/usecases/get_next_verifyneeded.dart';
 import 'package:redrotapp/domain/usecases/get_verifyneeded.dart';
+import 'package:redrotapp/main.dart';
 import 'clone_list_view_state.dart';
 
 class CloneListViewCubit extends Cubit<CloneListViewFetchState> {
@@ -43,12 +44,11 @@ class CloneListViewCubit extends Cubit<CloneListViewFetchState> {
     emit(CloneListViewFetchInProgress());
     try {
       final clonesResult = await getClonesByName(CloneNameParam(cloneName));
-      await Future.delayed(Duration(milliseconds: 200));
-      final clones = clonesResult.results;
-      if (clones.isEmpty) {
+      currentClones = clonesResult.results;
+      if (currentClones.isEmpty) {
         emit(CloneListViewFetchEmpty());
       } else {
-        emit(CloneListViewFetchSuccess(clones: clones));
+        emit(CloneListViewFetchSuccess(clones: currentClones));
       }
     } on AppError catch (e) {
       emit(CloneListViewFetchFailure());
@@ -57,26 +57,28 @@ class CloneListViewCubit extends Cubit<CloneListViewFetchState> {
 
   void fetchFirstPage(CloneType cloneType) async {
     emit(CloneListViewFetchInProgress());
+    try {
+      ClonesResultEntity clonesResult;
+      switch (cloneType) {
+        case CloneType.All:
+          clonesResult = await getClones(PageParam(1));
+          break;
+        case CloneType.VerifyNeeded:
+          clonesResult = await getVerifyNeeded(PageParam(1));
+          break;
+        case CloneType.Completed:
+          clonesResult = await getCompleted(PageParam(1));
+          break;
+      }
 
-    ClonesResultEntity clonesResult;
-    switch (cloneType) {
-      case CloneType.All:
-        clonesResult = await getClones(PageParam(1));
-        break;
-      case CloneType.VerifyNeeded:
-        clonesResult = await getVerifyNeeded(PageParam(1));
-        break;
-      case CloneType.Completed:
-        clonesResult = await getCompleted(PageParam(1));
-        break;
-    }
-
-    await Future.delayed(Duration(milliseconds: 200));
-    currentClones = clonesResult.results;
-    if (clonesResult.results.isEmpty) {
-      emit(CloneListViewFetchEmpty());
-    } else {
-      emit(CloneListViewFetchSuccess(clones: currentClones));
+      currentClones = clonesResult.results;
+      if (clonesResult.results.isEmpty) {
+        emit(CloneListViewFetchEmpty());
+      } else {
+        emit(CloneListViewFetchSuccess(clones: currentClones));
+      }
+    } on AppError catch (e) {
+      emit(CloneListViewFetchFailure());
     }
   }
 
@@ -108,5 +110,13 @@ class CloneListViewCubit extends Cubit<CloneListViewFetchState> {
     } on AppError catch (e) {
       emit(CloneListViewFetchFailure());
     }
+  }
+
+  void set(CloneEntity clone) {
+    final cloneIndex =
+        currentClones.indexWhere((element) => element.cloneId == clone.cloneId);
+
+    currentClones[cloneIndex] = clone;
+    emit(CloneListViewFetchSuccess(clones: currentClones));
   }
 }

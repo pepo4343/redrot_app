@@ -18,6 +18,11 @@ class AppTheme {
         ),
     scaffoldBackgroundColor: AppLightColors().backgroundColor,
     visualDensity: VisualDensity.adaptivePlatformDensity,
+    textSelectionTheme: TextSelectionThemeData(
+      cursorColor: AppLightColors().accentColor,
+      selectionColor: AppLightColors().disableColor,
+      selectionHandleColor: AppLightColors().accentColor,
+    ),
     textTheme: ThemeText.getLightTextTheme(),
   );
 
@@ -32,6 +37,11 @@ class AppTheme {
         ),
     scaffoldBackgroundColor: AppDarkColors().backgroundColor,
     visualDensity: VisualDensity.adaptivePlatformDensity,
+    textSelectionTheme: TextSelectionThemeData(
+      cursorColor: AppDarkColors().accentColor,
+      selectionColor: AppDarkColors().disableColor,
+      selectionHandleColor: AppDarkColors().accentColor,
+    ),
     textTheme: ThemeText.getDarkTextTheme(),
   );
 
@@ -58,6 +68,10 @@ extension ThemeDataExtras on ThemeData {
       AppTheme.getAppShadows(this.brightness).successShadow;
   List<BoxShadow> get errorBoxShadows =>
       AppTheme.getAppShadows(this.brightness).errorShadow;
+  List<BoxShadow> get disableBoxShadows =>
+      AppTheme.getAppShadows(this.brightness).disableShadow;
+  List<BoxShadow> get darkBoxShadows =>
+      AppTheme.getAppShadows(this.brightness).darkShadow;
 }
 
 extension ColorSchemeExtras on ColorScheme {
@@ -74,4 +88,5 @@ extension ColorSchemeExtras on ColorScheme {
       AppTheme.getAppColors(this.brightness).shimmerBackgroundColor;
   Color get shimmerHighlightColor =>
       AppTheme.getAppColors(this.brightness).shimmerHighlightColor;
+  Color get darkColor => AppTheme.getAppColors(this.brightness).darkColor;
 }

@@ -118,6 +118,7 @@ class _AnimatedCardState extends State<AnimatedCard>
       onTapDown: (TapDownDetails detail) => onTapDown(context, detail),
       onTapUp: onTapUp,
       onTapCancel: () => _resetAnimation(),
+      behavior: HitTestBehavior.deferToChild,
       child: AnimatedBuilder(
         animation: _controller,
         builder: (context, child) {

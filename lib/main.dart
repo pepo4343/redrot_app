@@ -17,6 +17,7 @@ import 'package:redrotapp/presentation/router/app_router.dart';
 import 'package:redrotapp/presentation/themes/app_theme.dart';
 
 import 'package:pedantic/pedantic.dart';
+import 'package:wiredash/wiredash.dart';
 import './di/get_it.dart' as getIt;
 
 import 'package:universal_platform/universal_platform.dart';
@@ -27,6 +28,9 @@ main() async {
   unawaited(
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]),
   );
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+  ));
 
   HydratedBloc.storage = await HydratedStorage.build(
     storageDirectory: await getApplicationDocumentsDirectory(),
@@ -100,6 +104,7 @@ class RedrotApp extends StatefulWidget {
 }
 
 class _RedrotAppState extends State<RedrotApp> with WidgetsBindingObserver {
+  final _navigatorKey = GlobalKey<NavigatorState>();
   @override
   void initState() {
     context.read<ThemeCubit>().updateAppTheme();
@@ -121,13 +126,19 @@ class _RedrotAppState extends State<RedrotApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Redrot Application',
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode:
-          context.select((ThemeCubit themeCubit) => themeCubit.state.themeMode),
-      onGenerateRoute: AppRouter.onGenerateRoute,
+    return Wiredash(
+      projectId: 'redrot-jevkp3u',
+      secret: 'oq8empaqfzr1pmptieu6eqtx9dlbk1w2f074g913j4gcd0pl',
+      navigatorKey: _navigatorKey,
+      child: MaterialApp(
+        title: 'Redrot Application',
+        navigatorKey: _navigatorKey,
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: context
+            .select((ThemeCubit themeCubit) => themeCubit.state.themeMode),
+        onGenerateRoute: AppRouter.onGenerateRoute,
+      ),
     );
   }
 }

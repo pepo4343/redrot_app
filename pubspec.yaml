@@ -54,6 +54,7 @@ dependencies:
   connectivity: ^3.0.6
   hydrated_bloc: ^7.0.1
   path_provider: ^2.0.2
+  wiredash: ^0.6.0
 
 
 

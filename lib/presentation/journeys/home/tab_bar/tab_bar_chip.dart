@@ -20,20 +20,13 @@ class TabChip extends StatefulWidget {
 }
 
 class _TabChipState extends State<TabChip> {
-  VoidCallback _pageListener = () {};
+  late VoidCallback _pageListener = () {
+    setState(() {
+      chipOffset = widget.pageController.offset /
+          widget.pageController.position.viewportDimension;
+    });
+  };
   double chipOffset = 0;
-
-  @override
-  void initState() {
-    _pageListener = () {
-      setState(() {
-        chipOffset = widget.pageController.offset /
-            widget.pageController.position.viewportDimension;
-      });
-    };
-    widget.pageController.addListener(_pageListener);
-    super.initState();
-  }
 
   @override
   void dispose() {
@@ -43,6 +36,8 @@ class _TabChipState extends State<TabChip> {
 
   @override
   Widget build(BuildContext context) {
+    widget.pageController.removeListener(_pageListener);
+    widget.pageController.addListener(_pageListener);
     return ClipPath(
       clipper: CustomClipPath(
         barHeight: widget.barHeight,

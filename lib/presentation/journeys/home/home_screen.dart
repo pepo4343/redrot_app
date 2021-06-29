@@ -58,6 +58,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   if (isMenuOpened)
                     GestureDetector(
+                      onPanUpdate: (details) {
+                        if (details.delta.dx < -10) {
+                          setState(() {
+                            isMenuOpened = !isMenuOpened;
+                          });
+                        }
+                      },
                       onTap: () {
                         setState(() {
                           isMenuOpened = !isMenuOpened;
@@ -184,15 +191,36 @@ class _AnimatedContentState extends State<AnimatedContent>
       Tween<double>(begin: 0, end: 40).animate(
     CurvedAnimation(parent: _controller, curve: Curves.ease),
   );
+  late Animation<double> _radiusWidthAnimation =
+      Tween<double>(begin: 0, end: 2).animate(
+    CurvedAnimation(parent: _controller, curve: Curves.ease),
+  );
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
   }
 
+  BoxBorder get _border {
+    var brightness = MediaQuery.of(context).platformBrightness;
+    bool isDarkMode = brightness == Brightness.dark;
+    final theme = Theme.of(context);
+
+    if (!isDarkMode) {
+      return Border.all(width: 0.0, color: Colors.transparent);
+    }
+    return Border.all(
+      width: widget.isMenuOpened ? 2 : 0,
+      color: widget.isMenuOpened
+          ? theme.colorScheme.onSecondary
+          : Colors.transparent,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
     if (widget.isMenuOpened) {
       _controller.forward();
     } else {
@@ -208,13 +236,17 @@ class _AnimatedContentState extends State<AnimatedContent>
       right: widget.isMenuOpened ? -0.6 * screenWidth : 0,
       child: ScaleTransition(
         scale: _scaleAnimation,
-        child: Container(
+        child: AnimatedContainer(
+          duration: animationDuration,
           decoration: BoxDecoration(
             boxShadow: theme.primaryBoxShadows,
+            borderRadius:
+                BorderRadius.all(Radius.circular(widget.isMenuOpened ? 40 : 0)),
+            border: _border,
           ),
           child: ClipRRect(
             borderRadius:
-                BorderRadius.all(Radius.circular(_radiusAnimation.value)),
+                BorderRadius.all(Radius.circular(widget.isMenuOpened ? 40 : 0)),
             child: widget.child,
           ),
         ),

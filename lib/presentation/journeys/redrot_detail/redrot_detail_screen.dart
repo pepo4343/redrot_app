@@ -150,6 +150,9 @@ class _RedrotDetailScreenState extends State<RedrotDetailScreen> {
                             currentChild!,
                         child: _buildButtonContainer(redrot, context),
                       ),
+                      SizedBox(
+                        height: Sizes.dimen_16,
+                      ),
                     ],
                   ),
                 ),

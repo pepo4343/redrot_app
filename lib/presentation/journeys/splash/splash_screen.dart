@@ -49,6 +49,9 @@ class _SplashBodyState extends State<SplashBody> {
     _timer = Timer(Duration(seconds: 3), () {
       final autoLoginState = context.read<AutoLoginCubit>().state;
 
+      if (autoLoginState is AutoLoginInitialize) {
+        Navigator.of(context).pushReplacementNamed('/login');
+      }
       if (autoLoginState is AutoLoginDisable) {
         Navigator.of(context).pushReplacementNamed('/login');
       }

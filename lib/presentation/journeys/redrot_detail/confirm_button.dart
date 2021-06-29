@@ -23,7 +23,7 @@ class ConfirmButton extends StatefulWidget {
 
 class _ConfirmButtonState extends State<ConfirmButton> {
   final iconSize = Sizes.dimen_18;
-  final paddingSize = Sizes.dimen_16;
+  final paddingSize = Sizes.dimen_18;
 
   String get _buttonText {
     if (widget.state == ConfirmButtonState.Active) {
@@ -132,7 +132,7 @@ class _ConfirmButtonState extends State<ConfirmButton> {
         _buttonText,
         maxLines: 1,
         softWrap: false,
-        overflow: TextOverflow.clip,
+        overflow: TextOverflow.visible,
         key: ValueKey<String>(_buttonText),
         style: theme.textTheme.bodyText2!.copyWith(color: _buttonColor),
       );
@@ -141,7 +141,7 @@ class _ConfirmButtonState extends State<ConfirmButton> {
       _buttonText,
       maxLines: 1,
       softWrap: false,
-      overflow: TextOverflow.clip,
+      overflow: TextOverflow.visible,
       key: ValueKey<String>(_buttonText),
       style: theme.textTheme.bodyText2!
           .copyWith(color: theme.colorScheme.onSecondary),

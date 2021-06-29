@@ -20,8 +20,8 @@ class RedrotDarkAppBar extends StatelessWidget with PreferredSizeWidget {
             .headline5!
             .copyWith(color: AppDarkColors().textColor),
       ),
-      iconTheme: IconThemeData(color: AppDarkColors().textColor),
-      backgroundColor: AppDarkColors().backgroundColor,
+      iconTheme: IconThemeData(color: const AppDarkColors().textColor),
+      backgroundColor: const AppDarkColors().backgroundColor,
       elevation: 0.0,
       centerTitle: true,
     );

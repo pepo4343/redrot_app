@@ -173,7 +173,7 @@ class _RedrotListView extends StatelessWidget {
         context.read<CloneDetailCubit>().fetch(clone.cloneId);
       },
       child: ListView.builder(
-        padding: EdgeInsets.only(top: Sizes.dimen_8),
+        padding: EdgeInsets.only(top: Sizes.dimen_8, bottom: Sizes.dimen_80),
         physics: const BouncingScrollPhysics(
           parent: const AlwaysScrollableScrollPhysics(),
         ),

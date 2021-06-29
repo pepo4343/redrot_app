@@ -22,8 +22,8 @@ class SecondaryButton extends StatelessWidget {
         width: width,
         decoration: BoxDecoration(
           color: Colors.transparent,
-          borderRadius: BorderRadius.all(
-            Radius.circular(5),
+          borderRadius: const BorderRadius.all(
+            const Radius.circular(5),
           ),
           border: Border.all(
             color: theme.colorScheme.secondary,
@@ -31,7 +31,7 @@ class SecondaryButton extends StatelessWidget {
           ),
         ),
         child: Padding(
-          padding: EdgeInsets.symmetric(vertical: Sizes.dimen_4),
+          padding: const EdgeInsets.symmetric(vertical: Sizes.dimen_4),
           child: Center(
             child: Text(
               text,

@@ -1,4 +1,4 @@
-package com.example.redrotapp
+package com.pavittangwongkit.redrotapp
 
 import io.flutter.embedding.android.FlutterActivity
 

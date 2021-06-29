@@ -67,13 +67,11 @@ class AnimatedResult extends AnimatedWidget {
       height: 1.15,
       color: _getTextColor(theme),
       fontWeight: FontWeight.w300,
-      fontFamily: "Roboto",
     );
 
     final categoryText = cloneEntity.categoryEntity!.categoryText;
 
     final scoreTextTheme = theme.textTheme.headline3!.copyWith(
-      fontFamily: "Roboto",
       height: 1.15,
       fontWeight: FontWeight.w200,
       color: theme.colorScheme.secondaryTextColor,
@@ -100,6 +98,17 @@ class AnimatedResult extends AnimatedWidget {
         curve: Interval(0.3, 0.8, curve: Curves.ease),
       ),
     );
+
+    final _opacityText = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(
+      CurvedAnimation(
+        parent: _animation,
+        curve: Interval(0.3, 0.8, curve: Curves.ease),
+      ),
+    );
+
     final widthText = Tween<double>(
       begin: 0,
       end: _textSize(categoryText, categoryTextTheme).width,
@@ -109,6 +118,7 @@ class AnimatedResult extends AnimatedWidget {
         curve: Interval(0.3, 0.8, curve: Curves.ease),
       ),
     );
+
     final heightDivider = Tween<double>(
       begin: 0,
       end: 30,
@@ -146,14 +156,17 @@ class AnimatedResult extends AnimatedWidget {
           ),
           Transform.translate(
             offset: _offsetText.value,
-            child: Container(
-              width: widthText.value,
-              child: Text(
-                categoryText,
-                maxLines: 1,
-                overflow: TextOverflow.clip,
-                softWrap: false,
-                style: categoryTextTheme,
+            child: Opacity(
+              opacity: _opacityText.value,
+              child: Container(
+                width: widthText.value,
+                child: Text(
+                  categoryText,
+                  maxLines: 1,
+                  overflow: TextOverflow.visible,
+                  softWrap: false,
+                  style: categoryTextTheme,
+                ),
               ),
             ),
           )
@@ -164,10 +177,10 @@ class AnimatedResult extends AnimatedWidget {
 
   Size _textSize(String text, TextStyle style) {
     final TextPainter textPainter = TextPainter(
-        text: TextSpan(text: text, style: style),
-        maxLines: 1,
-        textDirection: TextDirection.ltr)
-      ..layout(minWidth: 0, maxWidth: double.infinity);
+      text: TextSpan(text: text, style: style),
+      maxLines: 1,
+      textDirection: TextDirection.ltr,
+    )..layout(minWidth: 0, maxWidth: double.infinity);
     return textPainter.size;
   }
 }

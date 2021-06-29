@@ -23,13 +23,14 @@ class PrimaryButton extends StatelessWidget {
       child: Container(
         width: width,
         decoration: BoxDecoration(
-            color: theme.colorScheme.secondary,
-            borderRadius: BorderRadius.all(
-              Radius.circular(5),
-            ),
-            boxShadow: theme.secondaryBoxShadows),
+          color: theme.colorScheme.secondary,
+          borderRadius: const BorderRadius.all(
+            const Radius.circular(5),
+          ),
+          boxShadow: theme.secondaryBoxShadows,
+        ),
         child: Padding(
-          padding: EdgeInsets.symmetric(vertical: Sizes.dimen_4),
+          padding: const EdgeInsets.symmetric(vertical: Sizes.dimen_4),
           child: Center(
             child: Text(
               text,

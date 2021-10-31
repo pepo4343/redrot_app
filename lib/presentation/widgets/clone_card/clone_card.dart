@@ -14,6 +14,7 @@ import 'clone_card_body/clone_card_body.dart';
 class CloneCard extends StatelessWidget {
   final CloneEntity clone;
   final Function(CloneEntity clone) onTap;
+  final Function(CloneEntity clone) onDelete;
   final bool animation;
 
   static const double margin = Sizes.dimen_8;
@@ -21,6 +22,7 @@ class CloneCard extends StatelessWidget {
   CloneCard({
     required this.clone,
     required this.onTap,
+    required this.onDelete,
     this.animation = true,
   });
   @override
@@ -35,6 +37,9 @@ class CloneCard extends StatelessWidget {
       child: AnimatedCard(
         onTap: () {
           onTap(clone);
+        },
+        onLongPressed: () {
+          onDelete(clone);
         },
         width: double.infinity,
         sensitivity: 0.15,

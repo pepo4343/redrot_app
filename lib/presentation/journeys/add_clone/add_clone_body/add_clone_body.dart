@@ -17,6 +17,9 @@ class AddCloneBody extends StatelessWidget {
       CloneListViewFetchState fetchState =
           context.watch<CloneListViewCubit>().state;
       return CloneListView(
+        onItemDelete: (clone) {
+          print(clone);
+        },
         onRefresh: () =>
             context.read<CloneListViewCubit>().fetchByName(cloneName),
         onItemTap: (clone) async {

@@ -6,6 +6,7 @@ import '../themes/app_theme.dart';
 class AnimatedCard extends StatefulWidget {
   final Widget child;
   final VoidCallback onTap;
+  final VoidCallback onLongPressed;
   final double? width;
   final double? height;
   final double sensitivity;
@@ -14,6 +15,7 @@ class AnimatedCard extends StatefulWidget {
       this.width,
       this.height,
       required this.onTap,
+      required this.onLongPressed,
       this.sensitivity = 0.1});
 
   @override
@@ -118,6 +120,7 @@ class _AnimatedCardState extends State<AnimatedCard>
       onTapDown: (TapDownDetails detail) => onTapDown(context, detail),
       onTapUp: onTapUp,
       onTapCancel: () => _resetAnimation(),
+      onLongPress: widget.onLongPressed,
       behavior: HitTestBehavior.deferToChild,
       child: AnimatedBuilder(
         animation: _controller,

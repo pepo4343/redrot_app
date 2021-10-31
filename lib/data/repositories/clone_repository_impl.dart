@@ -141,4 +141,34 @@ class CloneRespositoryImpl extends CloneRepository {
       throw AppError("Something went wrong.");
     }
   }
+
+  @override
+  Future<void> deleteClone(String cloneId) async {
+    try {
+      await remoteDataSource.deleteClone(cloneId);
+    } on Exception catch (e) {
+      print(e);
+      throw AppError("Something went wrong.");
+    }
+  }
+
+  @override
+  Future<void> deleteRedrot(String redrotId) async {
+    try {
+      await remoteDataSource.deleteRedrot(redrotId);
+    } on Exception catch (e) {
+      print(e);
+      throw AppError("Something went wrong.");
+    }
+  }
+
+  @override
+  Future<void> deleteAll() async {
+    try {
+      await remoteDataSource.deleteAll();
+    } on Exception catch (e) {
+      print(e);
+      throw AppError("Something went wrong.");
+    }
+  }
 }

@@ -9,6 +9,9 @@ import 'package:redrotapp/domain/repositories/clone_repository.dart';
 import 'package:redrotapp/domain/repositories/user_repository.dart';
 import 'package:redrotapp/domain/usecases/confirm_redrot.dart';
 import 'package:redrotapp/domain/usecases/create_clone.dart';
+import 'package:redrotapp/domain/usecases/delete_all.dart';
+import 'package:redrotapp/domain/usecases/delete_clone.dart';
+import 'package:redrotapp/domain/usecases/delete_redrot.dart';
 import 'package:redrotapp/domain/usecases/edit_redrot.dart';
 import 'package:redrotapp/domain/usecases/get_clone_by_id.dart';
 import 'package:redrotapp/domain/usecases/get_clones.dart';
@@ -27,6 +30,9 @@ import 'package:redrotapp/presentation/logic/cubit/clone_detail_cubit/clone_deta
 import 'package:redrotapp/presentation/logic/cubit/clone_list_view/clone_list_view_cubit.dart';
 import 'package:redrotapp/presentation/logic/cubit/confirm_redrot/confirm_redrot_cubit.dart';
 import 'package:redrotapp/presentation/logic/cubit/create_clone/create_clone_cubit.dart';
+import 'package:redrotapp/presentation/logic/cubit/delete_all/delete_all_cubit.dart';
+import 'package:redrotapp/presentation/logic/cubit/delete_clone/delete_clone_cubit.dart';
+import 'package:redrotapp/presentation/logic/cubit/delete_redrot/delete_redrot_cubit.dart';
 import 'package:redrotapp/presentation/logic/cubit/edit_redrot/edit_redrot_cubit.dart';
 import 'package:redrotapp/presentation/logic/cubit/image_uploader/image_uploader_cubit.dart';
 import 'package:redrotapp/presentation/logic/cubit/login/login_cubit.dart';
@@ -61,6 +67,15 @@ Future init() async {
   getItInstance
       .registerLazySingleton<GetCompleted>(() => GetCompleted(getItInstance()));
 
+  getItInstance
+      .registerLazySingleton<DeleteClone>(() => DeleteClone(getItInstance()));
+
+  getItInstance
+      .registerLazySingleton<DeleteRedrot>(() => DeleteRedrot(getItInstance()));
+
+  getItInstance
+      .registerLazySingleton<DeleteAll>(() => DeleteAll(getItInstance()));
+
   getItInstance.registerLazySingleton<GetNextClones>(
       () => GetNextClones(getItInstance()));
 
@@ -92,6 +107,24 @@ Future init() async {
         createClone: getItInstance(),
         getCloneById: getItInstance(),
       ));
+
+  getItInstance.registerFactory<DeleteCloneCubit>(
+    () => DeleteCloneCubit(
+      deleteClone: getItInstance(),
+    ),
+  );
+
+  getItInstance.registerFactory<DeleteRedrotCubit>(
+    () => DeleteRedrotCubit(
+      deleteRedrot: getItInstance(),
+    ),
+  );
+
+  getItInstance.registerFactory<DeleteAllCubit>(
+    () => DeleteAllCubit(
+      deleteAll: getItInstance(),
+    ),
+  );
   getItInstance.registerFactory<ImageUploaderCubit>(
       () => ImageUploaderCubit(uploadRedrotImage: getItInstance()));
 

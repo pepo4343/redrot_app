@@ -24,7 +24,7 @@ class ErrorContainer extends StatelessWidget {
         SizedBox(
           height: Sizes.dimen_18,
         ),
-        _RefreshButton(
+        RefreshButton(
           onPressed: onRefresh,
         )
       ],
@@ -32,8 +32,8 @@ class ErrorContainer extends StatelessWidget {
   }
 }
 
-class _RefreshButton extends StatelessWidget {
-  const _RefreshButton({
+class RefreshButton extends StatelessWidget {
+  const RefreshButton({
     Key? key,
     required this.onPressed,
   }) : super(key: key);

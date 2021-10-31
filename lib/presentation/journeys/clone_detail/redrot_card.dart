@@ -16,9 +16,11 @@ import '../../themes/app_theme.dart';
 class RedrotCard extends StatefulWidget {
   final RedrotEntity redrotEntity;
   final VoidCallback onPressed;
+  final Function(RedrotEntity redrotEntity) onDelete;
   RedrotCard({
     required this.redrotEntity,
     required this.onPressed,
+    required this.onDelete,
   });
   @override
   _RedrotCardState createState() => _RedrotCardState();
@@ -31,6 +33,9 @@ class _RedrotCardState extends State<RedrotCard> {
       padding: const EdgeInsets.all(8.0),
       child: AnimatedCard(
         onTap: widget.onPressed,
+        onLongPressed: () {
+          widget.onDelete(widget.redrotEntity);
+        },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [

@@ -29,6 +29,10 @@ abstract class CloneRemoteDataSource {
     double lesionWidth,
     int color,
   );
+
+  Future<void> deleteClone(String cloneId);
+  Future<void> deleteRedrot(String redrotId);
+  Future<void> deleteAll();
 }
 
 class CloneRemoteDataSourceImpl extends CloneRemoteDataSource {
@@ -186,5 +190,30 @@ class CloneRemoteDataSourceImpl extends CloneRemoteDataSource {
     );
     final cloneResults = CloneModel.fromJson(response);
     return cloneResults;
+  }
+
+  @override
+  Future<void> deleteClone(String cloneId) async {
+    final response = await client.post(
+      "/clone/delete",
+      body: {
+        "cloneId": cloneId,
+      },
+    );
+  }
+
+  @override
+  Future<void> deleteRedrot(String redrotId) async {
+    final response = await client.post(
+      "/clone/redrot/delete",
+      body: {
+        "redrotId": redrotId,
+      },
+    );
+  }
+
+  @override
+  Future<void> deleteAll() async {
+    final response = await client.post("/clone/delete/all", body: {});
   }
 }

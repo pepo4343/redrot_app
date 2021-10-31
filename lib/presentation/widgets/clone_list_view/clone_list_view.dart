@@ -12,11 +12,13 @@ class CloneListView extends StatefulWidget {
   Function? onLoadMore;
   Function onRefresh;
   Function(CloneEntity) onItemTap;
+  Function(CloneEntity) onItemDelete;
   CloneListViewFetchState fetchState;
   CloneListView({
     this.onLoadMore,
     required this.onRefresh,
     required this.onItemTap,
+    required this.onItemDelete,
     required this.fetchState,
   });
   @override
@@ -87,9 +89,21 @@ class _CloneListViewState extends State<CloneListView> {
     }
     if (widget.fetchState is CloneListViewFetchEmpty) {
       pageContent = Center(
-        child: Text(
-          "ไม่พบข้อมูล",
-          style: Theme.of(context).textTheme.bodyText1,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "ไม่พบข้อมูล",
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
+            SizedBox(
+              height: Sizes.dimen_8,
+            ),
+            RefreshButton(onPressed: () {
+              widget.onRefresh();
+            })
+          ],
         ),
       );
     }
@@ -138,6 +152,7 @@ class _CloneListViewState extends State<CloneListView> {
           return Hero(
             tag: clones[index - 1].cloneId,
             child: CloneCard(
+              onDelete: widget.onItemDelete,
               onTap: widget.onItemTap,
               clone: clones[index - 1],
             ),

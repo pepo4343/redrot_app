@@ -1,11 +1,14 @@
 import 'package:auto_animated/auto_animated.dart';
 import 'package:flutter/material.dart';
 import 'package:redrotapp/common/constants/size_constants.dart';
+import 'package:redrotapp/common/functions.dart';
 import 'package:redrotapp/di/get_it.dart';
 import 'package:redrotapp/domain/entities/clone_entity.dart';
 import 'package:redrotapp/presentation/journeys/clone_detail/fab_add_redrot.dart';
 import 'package:redrotapp/presentation/journeys/clone_detail/redrot_card.dart';
 import 'package:redrotapp/presentation/logic/cubit/authentication/authentication_cubit.dart';
+import 'package:redrotapp/presentation/logic/cubit/delete_clone/delete_clone_cubit.dart';
+import 'package:redrotapp/presentation/logic/cubit/delete_redrot/delete_redrot_cubit.dart';
 import 'package:redrotapp/presentation/logic/cubit/image_uploader/image_uploader_cubit.dart';
 import 'package:redrotapp/presentation/router/app_router.dart';
 import 'package:redrotapp/presentation/widgets/app_fab.dart';
@@ -13,6 +16,7 @@ import 'package:redrotapp/presentation/logic/cubit/clone_detail_cubit/clone_deta
 import 'package:redrotapp/presentation/logic/cubit/clone_detail_cubit/clone_detail_state.dart';
 import 'package:redrotapp/presentation/widgets/animated_card.dart';
 import 'package:redrotapp/presentation/widgets/clone_card/clone_card.dart';
+import 'package:redrotapp/presentation/widgets/delete_overlay.dart';
 import 'package:redrotapp/presentation/widgets/error_container.dart';
 import 'package:redrotapp/presentation/widgets/loading_indicator.dart';
 
@@ -38,8 +42,18 @@ class _CloneDetailScreenState extends State<CloneDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => getItInstance<CloneDetailCubit>(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => getItInstance<CloneDetailCubit>(),
+        ),
+        BlocProvider(
+          create: (context) => getItInstance<DeleteCloneCubit>(),
+        ),
+        BlocProvider(
+          create: (context) => getItInstance<DeleteRedrotCubit>(),
+        )
+      ],
       child: Scaffold(
         appBar: RedrotAppBar(
           title: widget.clone.cloneName,
@@ -127,16 +141,39 @@ class _CloneDetailScreenState extends State<CloneDetailScreen> {
                     );
                   }
 
-                  return WillPopScope(
-                    onWillPop: () async {
-                      Navigator.of(context).pop(clone);
-                      return false;
+                  return BlocListener<DeleteRedrotCubit, DeleteRedrotState>(
+                    listener: (context, state) {
+                      if (state is DeleteRedrotInProgress) {
+                        showDeleteInprogressSnackbar(context);
+                      }
+                      if (state is DeleteRedrotSuccess) {
+                        context.read<CloneDetailCubit>().fetch(clone.cloneId);
+                        showDeleteSuccessSnackbar(context);
+                      }
                     },
-                    child: AnimatedSwitcher(
-                      duration: Duration(milliseconds: 300),
-                      layoutBuilder: (currentChild, previousChildren) =>
-                          currentChild!,
-                      child: content,
+                    child: BlocListener<DeleteCloneCubit, DeleteCloneState>(
+                      listener: (context, state) {
+                        if (state is DeleteCloneInProgress) {
+                          showDeleteInprogressSnackbar(context);
+                        }
+                        if (state is DeleteCloneSuccess) {
+                          Navigator.of(context).popUntil((route) => true);
+                          Navigator.of(context).pushNamed("/home");
+                          showDeleteSuccessSnackbar(context);
+                        }
+                      },
+                      child: WillPopScope(
+                        onWillPop: () async {
+                          Navigator.of(context).pop(clone);
+                          return false;
+                        },
+                        child: AnimatedSwitcher(
+                          duration: Duration(milliseconds: 300),
+                          layoutBuilder: (currentChild, previousChildren) =>
+                              currentChild!,
+                          child: content,
+                        ),
+                      ),
                     ),
                   );
                 }),
@@ -157,13 +194,6 @@ class _RedrotListView extends StatelessWidget {
 
   final CloneEntity clone;
 
-  final options = LiveOptions(
-    showItemInterval: Duration(milliseconds: 100),
-    showItemDuration: Duration(milliseconds: 600),
-    visibleFraction: 0.05,
-    reAnimateOnVisibility: false,
-  );
-
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
@@ -182,6 +212,18 @@ class _RedrotListView extends StatelessWidget {
             return Hero(
               tag: clone.cloneId,
               child: CloneCard(
+                onDelete: (clone) async {
+                  final authenticationState =
+                      context.read<AuthenticationCubit>().state;
+                  if (authenticationState is AuthenticationGuestAnthenticated) {
+                    return;
+                  }
+                  final bool? isConfrim = await Navigator.of(context)
+                      .push(DeleteOverlay(clone.cloneName)) as bool?;
+                  if (isConfrim == true) {
+                    context.read<DeleteCloneCubit>().delete(clone.cloneId);
+                  }
+                },
                 clone: clone,
                 onTap: (_) {},
                 animation: false,
@@ -214,6 +256,17 @@ class _RedrotListView extends StatelessWidget {
               .pushNamed("/redrotdetail", arguments: argument) as CloneEntity;
 
           context.read<CloneDetailCubit>().set(clone);
+        },
+        onDelete: (redrot) async {
+          final authenticationState = context.read<AuthenticationCubit>().state;
+          if (authenticationState is AuthenticationGuestAnthenticated) {
+            return;
+          }
+          final bool? isConfrim = await Navigator.of(context)
+              .push(DeleteOverlay("ลบข้อมูลเหี่ยวเน่าแดง")) as bool?;
+          if (isConfrim == true) {
+            context.read<DeleteRedrotCubit>().delete(redrot.redrotId);
+          }
         },
       );
 }

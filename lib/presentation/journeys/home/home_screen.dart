@@ -8,6 +8,8 @@ import 'package:redrotapp/presentation/journeys/home/pageview/home_page_view.dar
 import 'package:redrotapp/presentation/journeys/home/tab_bar/tab_bar.dart';
 import 'package:redrotapp/presentation/journeys/qr/qr_screen.dart';
 import 'package:redrotapp/presentation/logic/cubit/clone_list_view/clone_list_view_cubit.dart';
+import 'package:redrotapp/presentation/logic/cubit/delete_all/delete_all_cubit.dart';
+import 'package:redrotapp/presentation/logic/cubit/delete_clone/delete_clone_cubit.dart';
 import 'package:redrotapp/presentation/logic/cubit/internet/internet_cubit.dart';
 import 'package:redrotapp/presentation/widgets/app_fab.dart';
 import 'package:redrotapp/presentation/widgets/image_uploader_indicator.dart';
@@ -42,42 +44,46 @@ class _HomeScreenState extends State<HomeScreen> {
         return true;
       },
       child: Scaffold(
-        body: Stack(
-          children: [
-            if (isMenuOpened) Menu(),
-            AnimatedContent(
-              isMenuOpened: isMenuOpened,
-              child: Stack(
-                children: [
-                  HomeContent(
-                    onMenuPressed: () {
-                      setState(() {
-                        isMenuOpened = !isMenuOpened;
-                      });
-                    },
-                  ),
-                  if (isMenuOpened)
-                    GestureDetector(
-                      onPanUpdate: (details) {
-                        if (details.delta.dx < -10) {
-                          setState(() {
-                            isMenuOpened = !isMenuOpened;
-                          });
-                        }
-                      },
-                      onTap: () {
+        backgroundColor: Theme.of(context).colorScheme.cardColor,
+        body: BlocProvider(
+          create: (context) => getItInstance<DeleteAllCubit>(),
+          child: Stack(
+            children: [
+              if (isMenuOpened) Menu(),
+              AnimatedContent(
+                isMenuOpened: isMenuOpened,
+                child: Stack(
+                  children: [
+                    HomeContent(
+                      onMenuPressed: () {
                         setState(() {
                           isMenuOpened = !isMenuOpened;
                         });
                       },
-                      child: Container(
-                        color: Colors.transparent,
-                      ),
                     ),
-                ],
+                    if (isMenuOpened)
+                      GestureDetector(
+                        onPanUpdate: (details) {
+                          if (details.delta.dx < -10) {
+                            setState(() {
+                              isMenuOpened = !isMenuOpened;
+                            });
+                          }
+                        },
+                        onTap: () {
+                          setState(() {
+                            isMenuOpened = !isMenuOpened;
+                          });
+                        },
+                        child: Container(
+                          color: Colors.transparent,
+                        ),
+                      ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -145,8 +151,16 @@ class HomeContent extends StatelessWidget {
               child: PageView.builder(
                 controller: _pageController,
                 itemBuilder: (context, index) {
-                  return BlocProvider(
-                    create: (context) => getItInstance<CloneListViewCubit>(),
+                  return MultiBlocProvider(
+                    providers: [
+                      BlocProvider(
+                        create: (context) =>
+                            getItInstance<CloneListViewCubit>(),
+                      ),
+                      BlocProvider(
+                        create: (context) => getItInstance<DeleteCloneCubit>(),
+                      )
+                    ],
                     child: HomePageView(index),
                   );
                 },
@@ -241,12 +255,11 @@ class _AnimatedContentState extends State<AnimatedContent>
           decoration: BoxDecoration(
             boxShadow: theme.primaryBoxShadows,
             borderRadius:
-                BorderRadius.all(Radius.circular(widget.isMenuOpened ? 40 : 0)),
-            border: _border,
+                BorderRadius.all(Radius.circular(_radiusAnimation.value)),
           ),
           child: ClipRRect(
             borderRadius:
-                BorderRadius.all(Radius.circular(widget.isMenuOpened ? 40 : 0)),
+                BorderRadius.all(Radius.circular(_radiusAnimation.value)),
             child: widget.child,
           ),
         ),

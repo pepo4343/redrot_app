@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:redrotapp/common/enum.dart';
 import 'package:redrotapp/domain/entities/clone_entity.dart';
 
@@ -39,4 +40,50 @@ CloneStatus getCloneStatus(CloneEntity cloneEntity) {
   } else {
     return CloneStatus.VerifyNeed;
   }
+}
+
+void showDeleteInprogressSnackbar(BuildContext context) {
+  final theme = Theme.of(context);
+  final snackBar = SnackBar(
+    duration: Duration(seconds: 1),
+    content: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text(
+          "กำลังลบข้อมูล...",
+          style: theme.textTheme.bodyText1!
+              .copyWith(color: theme.colorScheme.onSecondary),
+        ),
+        Container(
+          width: 32,
+          height: 32,
+          child: CircularProgressIndicator(
+            strokeWidth: 1,
+            color: theme.colorScheme.onSecondary,
+          ),
+        )
+      ],
+    ),
+  );
+  if (ScaffoldMessenger.of(context).mounted) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+  }
+  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+}
+
+void showDeleteSuccessSnackbar(BuildContext context) {
+  final theme = Theme.of(context);
+  final snackBar = SnackBar(
+    duration: Duration(seconds: 1),
+    content: Text(
+      "ลบข้อมูลเสร็จสิ้น",
+      style: theme.textTheme.bodyText1!
+          .copyWith(color: theme.colorScheme.onSecondary),
+    ),
+  );
+  if (ScaffoldMessenger.of(context).mounted) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+  }
+  ScaffoldMessenger.of(context).showSnackBar(snackBar);
 }

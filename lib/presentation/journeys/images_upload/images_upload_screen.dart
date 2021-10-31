@@ -46,7 +46,7 @@ class _ImagesUploadScreenState extends State<ImagesUploadScreen> {
 
     return Scaffold(
       appBar: RedrotAppBar(
-        title: "อัพโหลดรูปภาพ",
+        title: "อัปโหลดรูปภาพ",
       ),
       body: // With predefined options
           Padding(

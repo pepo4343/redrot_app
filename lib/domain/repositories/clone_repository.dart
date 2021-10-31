@@ -31,4 +31,9 @@ abstract class CloneRepository {
     double lesionWidth,
     int color,
   );
+
+  Future<void> deleteClone(String cloneId);
+
+  Future<void> deleteRedrot(String redrotId);
+  Future<void> deleteAll();
 }

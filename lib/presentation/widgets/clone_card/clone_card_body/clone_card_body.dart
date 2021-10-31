@@ -33,9 +33,12 @@ class CloneCardBody extends StatelessWidget {
               vertical: Sizes.dimen_4,
               horizontal: Sizes.dimen_20,
             ),
-            child: Text(
-              "ไม่พบข้อมูลเหี่ยวเน่าแดง",
-              style: theme.textTheme.bodyText2!,
+            child: FittedBox(
+              fit: BoxFit.fitWidth,
+              child: Text(
+                "ไม่พบข้อมูลความต้านทานของโรคเน่าแดง",
+                style: theme.textTheme.bodyText2!,
+              ),
             ),
           ),
         );
